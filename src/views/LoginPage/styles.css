@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css?family=Righteous|Signika');
+.col-content-slogan h1, .col-content-slogan h2{
+    color:black;   
+}
+
+.col-content-slogan h1{
+    font-size: 9vmin;
+    
+}
+
+.col-content-slogan h2{
+    font-size: 4vmin;
+}
+
+
+.page-login{
+    widows: 100vw;
+    height: 100vh;
+    box-sizing: border-box;
+    padding: 5vh 13vw 0 13vw;
+    background-color: white;
+    background: url('C:/Users/Wilmer/preact/tracking/src/resources/mapas.jpg');
+    background-repeat: no-repeat;
+    background-position-y: 35vh;
+}

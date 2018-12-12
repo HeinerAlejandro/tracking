@@ -14,6 +14,8 @@ const SET_AUTHENTICATED = 'SET_AUTHENTICATED'
 const SUCCESS_TOKEN_CONVERT = 'CONVERT_TOKEN_SUCCESS'
 const FAILURE_TOKEN_CONVERT = 'FAILURE_TOKEN_CONVERT'
 
+const REGISTER_USER = 'REGISTER_USER'
+
 const setAuthenticating = playload => ({type : SET_AUTHENTICATING, playload})
 const setAuthenticated = playload => ({type : SET_AUTHENTICATED, playload})
 
@@ -66,6 +68,17 @@ const converToken = acces_token => dispatch => {
 			      
 }
 
+const register = data_user_registering => dispatch => {
+	dispatch(setRegistering(true))
+
+	fetch('${URL_SERVER}/')
+		.then( response => response.json())
+		.then( status => setAuthenticated(status.complete))
+		.catch( err => setAuthenticated(false))
+
+	dispatch(setRegistering(false))
+}
+
 export {
 	SET_USER_LOG,
 	SET_VISIBLE_LOGIN,
@@ -73,11 +86,13 @@ export {
 	SET_AUTHENTICATING,
 	SET_REGISTERED,
 	SET_AUTHENTICATED,
+	REGISTER_USER,
 	SUCCESS_TOKEN_CONVERT,
 	FAILURE_TOKEN_CONVERT,
 	setAuthenticating,
 	setAuthenticated,
 	setRegistering,
 	setRegistered,
-	converToken
+	converToken,
+	register
 }

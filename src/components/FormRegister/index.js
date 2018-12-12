@@ -1,20 +1,46 @@
 import React from 'react'
 import SocialButtons from './SocialButtons'
-import {Button} from 'antd'
+import {Button, Row, Col} from 'antd'
+import './styles.css'
 
 const FormRegister = (props) => {
+
 	return(
-		<form  class = 'form'>
-			<label for = 'name'>names</label><input type = 'text' class = 'field' name = 'name' id = 'name'/>
-			<label for = 'surname'>surnames</label><input type = 'text' class = 'field' name = 'surname' id = 'surname'/>
-			<label for = 'email'>email</label><input type = 'text' class = 'field' name = 'email' id = 'email'/>
-			<p><button style = {{background:'none', border:'none'}}>¿tienes una cuenta?</button></p>
-			<p>o registrate con</p>
-			<SocialButtons 
-				successProvider = {props.succesProvider}
-				successFailure = {props.succesFailure}/>
-			<button type = 'primary' loading = {props.registering} onSubmit = {props.handleSubmit}/>
-		</form>
+		
+		<div class="contenedor-formulario">
+			<div class="wrap">
+				<form action="" class="formulario" name="formulario_registro" method="get">
+					<div>
+						<div class="input-group">
+							<input type="text" id="nombre" name="nombre" />
+							<label class="label" for="nombre">Nombre:</label>
+						</div>
+						<div class="input-group">
+							<input type="email" id="correo" name="correo" />
+							<label class="label" for="correo">Correo:</label>
+						</div>
+						<div class="input-group">
+							<input type="password" id="pass" name="pass"/>
+							<label class="label" for="pass">Contraseña:</label>
+						</div>
+						<div class="input-group">
+							<input type="password" id="pass2" name="pass2"/>
+							<label class="label" for="pass2">Repetir Contraseña:</label>
+						</div>
+						<SocialButtons 
+							successProvider = {props.succesProvider}
+							successFailure = {props.succesFailure}/>
+
+						<div class="input-group checkbox">
+							<input type="checkbox" name="terminos" id="terminos" value="true" />
+							<label for="terminos">Acepto los Terminos y Condiciones</label>
+						</div>
+							
+						<input type="submit" id="btn-submit" value="Enviar"/>
+					</div>
+				</form>
+			</div>
+		</div>
 	)
 }
 

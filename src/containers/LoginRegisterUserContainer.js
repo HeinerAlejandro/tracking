@@ -8,11 +8,18 @@ import {converToken,
 
 class LoginRegisterUserContainer extends Component{
 
+
+	constructor(props){
+		super(props)
+		this.responseProviderSucces = this.responseProviderSucces.bind(this)
+		this.responseProviderFailure = this.responseProviderFailure.bind(this)
+		this.handleSubmit = this.handleSubmit.bind(this)
+	}
+
 	responseProviderSucces(response){
-		console.log(response)
-		console.log(this.props.actions)
-		//const { converToken } = this.props
-		//converToken(response)
+		console.log(this.props)
+		const { converToken } = this.props
+		converToken(response)
 	}
 
 	responseProviderFailure(response){
@@ -20,12 +27,14 @@ class LoginRegisterUserContainer extends Component{
 	}
 
 	handleSubmit(evt){
-		evt.preventDefault()
 		this.props.setRegistering(true)
+		console.log(this.props.is_registering)
 	}
 
 	render(){
+	
 		return(
+			
 			<Fragment>
 				<FormRegister 
 					succesProvider = {this.responseProviderSucces}
@@ -54,11 +63,9 @@ const mapStateToProps = state => {
 	})
 }
 
-const mapDispatchToProps = dispatch => {
-	return {
-		converToken : access_token => dispatch(converToken(access_token)),
-		setRegistering : value => dispatch(setRegistering(value)),
-	}
+const mapDispatchToProps = {
+	converToken,
+	setRegistering
 }
 
 const container = connect(mapStateToProps, mapDispatchToProps)(LoginRegisterUserContainer)
