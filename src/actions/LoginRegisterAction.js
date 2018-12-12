@@ -38,7 +38,8 @@ const setTokenConvertSuccess = payload => {
 
 const converToken = acces_token => dispatch => {
 	const searchParams = new URLSearchParams()
-
+	console.log("token extraido")
+	console.log(acces_token)
 	searchParams.set("grant_type", "convert_token");
     searchParams.set("client_id", CLIENT_ID_DJANGO);
     searchParams.set("client_secret", CLIENT_SECRET_DJANGO);
@@ -47,7 +48,7 @@ const converToken = acces_token => dispatch => {
 
    
     dispatch(setAuthenticating(true))
-    fetch('${URL_SERVER}/auth/convert_token',{
+    fetch("http://127.0.0.1:8000/auth/convert-token",{
     	method: "POST",
        	headers: {
         	Accept: "application/json",
@@ -56,12 +57,14 @@ const converToken = acces_token => dispatch => {
         body: searchParams})
 	    	.then( json => json.json())
 	    	.then( data => {
-	    		console.log(data)
-	    		dispatch(setTokenConvertSuccess(data.acces_token))
+				console.log("el token de autenticacion en el server es:")
+				console.log(data)
+	    		dispatch(setTokenConvertSuccess(data))
 	    		dispatch(setAuthenticating(false))
 	    		dispatch(setAuthenticated(true))})
 	    	.catch( err => {
-	    		//dispatch(setTokenConvertFailure(data))
+				//dispatch(setTokenConvertFailure(data))
+				console.log("hubo el error: "+err)
 	    	   dispatch(setAuthenticating(false))
 	 		   dispatch(setAuthenticated(false))
 	    	})
