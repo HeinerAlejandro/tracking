@@ -11,7 +11,8 @@ const ContentSocialButtons = ({successProvider, successFailure}) => {
 			    onFailure={successFailure}
 			    className="loginBtn loginBtn--google"
 			    prompt="select_account"
-			    redirectUri="http://localhost:3000/secret/" />
+				theme = 'dark'
+			    redirectUri="http://localhost:3000/account/" />
 		</div>
 	)
 }

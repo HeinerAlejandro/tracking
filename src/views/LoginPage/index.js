@@ -1,10 +1,11 @@
 import React from 'react'
 import './styles.css'
-import {Col, Row} from 'antd'
+import {Col, Row } from 'antd'
 import LoginRegisterUserContainer from './../../containers/LoginRegisterUserContainer'
 
 const LoginPage = (props) => {
 	return(
+		
 		<div className = 'principal'>
 			<div  className = 'page-login'>
 				<Row type = 'flex' justify = 'space-between'>

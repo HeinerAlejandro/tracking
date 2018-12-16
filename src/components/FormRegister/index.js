@@ -1,47 +1,171 @@
 import React from 'react'
 import SocialButtons from './SocialButtons'
-import {Button, Row, Col} from 'antd'
+import { Form, Input, Select, Checkbox, Button, AutoComplete } from 'antd'
 import './styles.css'
 
-const FormRegister = (props) => {
+const FormItem = Form.Item;
+const Option = Select.Option;
 
-	return(
-		
-		<div class="contenedor-formulario">
-			<div class="wrap">
-				<form action="" class="formulario" name="formulario_registro" method="get">
-					<div>
-						<div class="input-group">
-							<input type="text" id="nombre" name="nombre" />
-							<label class="label" for="nombre">Nombre:</label>
-						</div>
-						<div class="input-group">
-							<input type="email" id="correo" name="correo" />
-							<label class="label" for="correo">Correo:</label>
-						</div>
-						<div class="input-group">
-							<input type="password" id="pass" name="pass"/>
-							<label class="label" for="pass">Contraseña:</label>
-						</div>
-						<div class="input-group">
-							<input type="password" id="pass2" name="pass2"/>
-							<label class="label" for="pass2">Repetir Contraseña:</label>
-						</div>
-						<SocialButtons 
-							successProvider = {props.succesProvider}
-							successFailure = {props.succesFailure}/>
 
-						<div class="input-group checkbox">
-							<input type="checkbox" name="terminos" id="terminos" value="true" />
-							<label for="terminos">Acepto los Terminos y Condiciones</label>
-						</div>
-							
-						<input type="submit" id="btn-submit" value="Enviar"/>
-					</div>
-				</form>
-			</div>
-		</div>
-	)
+class RegistrationForm extends React.Component {
+
+  handleSubmit = (e) => {
+    e.preventDefault();
+    this.props.form.validateFieldsAndScroll((err, values) => {
+      if (!err) {
+        console.log('Received values of form: ', values);
+      }
+	});
+	
+	const data_user = {
+		names : this.props.form.getFieldValue('names'),
+		email : this.props.form.getFieldValue('email'),
+		password : this.props.form.getFieldValue('password')
+	}
+
+	this.props.initRegistration(data_user)
+	
+  }
+
+  handleConfirmBlur = (e) => {
+    const value = e.target.value;
+    //this.setState({ confirmDirty: this.state.confirmDirty || !!value });
+  }
+
+  compareToFirstPassword = (rule, value, callback) => {
+    const form = this.props.form;
+    if (value && value !== form.getFieldValue('password')) {
+      callback('Two passwords that you enter is inconsistent!');
+    } else {
+      callback();
+    }
+  }
+
+  validateToNextPassword = (rule, value, callback) => {
+    const form = this.props.form;
+    if (value) {
+      form.validateFields(['confirm'], { force: true });
+    }
+    callback();
+  }
+
+
+  render() {
+    const { getFieldDecorator } = this.props.form;
+
+    const formItemLayout = {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 8 },
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+		sm: { span: 16 },
+      },
+    };
+    const tailFormItemLayout = {
+      wrapperCol: {
+        xs: {
+          span: 24,
+          offset: 0,
+        },
+        sm: {
+          span: 16,
+          offset: 8,
+        },
+      },
+    };
+    const prefixSelector = getFieldDecorator('prefix', {
+      initialValue: '86',
+    })(
+      <Select style={{ width: 70 }}>
+        <Option value="86">+86</Option>
+        <Option value="87">+87</Option>
+      </Select>
+    );
+
+    return (
+      <Form onSubmit={this.handleSubmit}>
+        <FormItem
+          {...formItemLayout}
+          label="E-mail"
+        >
+          {getFieldDecorator('email', {
+            rules: [{
+              type: 'email', message: 'The input is not valid E-mail!',
+            }, {
+              required: true, message: 'Please input your E-mail!',
+            }],
+          })(
+            <Input />
+          )}
+        </FormItem>
+
+		<FormItem
+          {...formItemLayout}
+          label="names"
+        >
+          {getFieldDecorator('names', {
+            rules: [{
+              required: true, message: 'Please input your E-mail!',
+            }, ],
+          })(
+            <Input />
+          )}
+        </FormItem>
+
+        <FormItem
+          {...formItemLayout}
+          label="Password"
+        >
+          {getFieldDecorator('password', {
+            rules: [{
+              required: true, message: 'Please input your password!',
+            }, {
+              validator: this.validateToNextPassword,
+            }],
+          })(
+            <Input type="password" />
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Confirm"
+        >
+          {getFieldDecorator('confirm', {
+            rules: [{
+              required: true, message: 'Please confirm your password!',
+            }, {
+              validator: this.compareToFirstPassword,
+            }],
+          })(
+            <Input type="password" onBlur={this.handleConfirmBlur} />
+          )}
+        </FormItem>
+        
+        <FormItem {...tailFormItemLayout}>
+          {getFieldDecorator('agreement', {
+            valuePropName: 'checked',
+          })(
+            <Checkbox>I have read the <a href="">agreement</a></Checkbox>
+          )}
+        </FormItem>
+      
+		<FormItem {...tailFormItemLayout}>
+          <SocialButtons 
+			  successProvider = {this.props.successProvider}
+			  successFailure = {this.props.successFailure}
+		  />
+        </FormItem>
+
+		<FormItem {...tailFormItemLayout}>
+          <Button type="primary" htmlType="submit">Register</Button>
+        </FormItem>
+      </Form>
+    );
+  }
 }
 
-export default FormRegister
+const WrappedRegistrationForm = Form.create()(RegistrationForm);
+
+export default WrappedRegistrationForm
