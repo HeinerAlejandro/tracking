@@ -5,4 +5,4 @@ import ManagerReducer from './../reducers'
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-export const store = createStore(ManagerReducer, composeEnhancers(applyMiddleware(thunk, refreshTokenServer)))
+export const store = createStore(ManagerReducer, composeEnhancers(applyMiddleware(thunk)))

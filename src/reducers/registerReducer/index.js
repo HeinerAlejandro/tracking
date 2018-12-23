@@ -16,7 +16,6 @@ const registerReducer = (state = initialState, action) => {
 
 			return {...state, is_registered : action.payload}	
 		default:
-
 			return state
 	}
 }

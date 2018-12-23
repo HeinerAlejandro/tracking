@@ -28,6 +28,8 @@ const setAuthenticated = playload => ({type : SET_AUTHENTICATED, playload})
 const setRegistering = playload => ({type : SET_REGISTERING, playload})
 const setRegistered = playload => ({type : SET_REGISTERED, playload})
 
+const setVisibleLogin = playload => ({type : SET_VISIBLE_LOGIN, playload})
+
 const setMessageOperation = payload => ({type : SET_MESSAGE, payload})
 
 const initRegistration = data_user => dispatch => {
@@ -58,8 +60,7 @@ const initRegistration = data_user => dispatch => {
 }
 
 const setConvertTokenFailure = operation => dispatch => {
-	//2 alternativas: ajustar el setMessageOperation a el playload que es un objeto de tipo err
-	//o definir como constantes los tipos de errores
+
 	dispatch(setAuthenticating(false))
 	dispatch(setAuthenticated(false))
 	dispatch(setMessageOperation(operation))
@@ -127,6 +128,7 @@ export {
 	FAILURE_TOKEN_CONVERT,
 	setMessageOperation,
 	initRegistration,
+	setVisibleLogin,
 	setConvertTokenFailure,
 	setTokenConvertSuccess,
 	setAuthenticating,

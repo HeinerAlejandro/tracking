@@ -1,26 +1,146 @@
-import React from 'react'
-import './styles.css'
-import {Col, Row } from 'antd'
-import LoginRegisterUserContainer from './../../containers/LoginRegisterUserContainer'
+import React, {Component, Fragment} from 'react'
+import {connect} from 'react-redux'
+import FormRegister from './../../components/FormRegister'
+import FormSession from './../../components/FormSession'
+import MessageOperation from './../../components/MessageOperation'
+import { CODES_OPERATIONS } from './../../constants/withTokens'
+import { withRouter } from 'react-router'
+import {converToken,
+		initRegistration,
+		setVisibleLogin} from './../../actions/LoginRegisterAction'
 
-const LoginPage = (props) => {
-	return(
+import { Row, Col, Icon } from 'antd'
+import './styles.css'
+
+import  { ReactComponent as logo }  from './../../resources/location.svg'
+
+class LoginPage extends Component{
+
+	constructor(props){
+		super(props)
+		this.responseProviderSucces = this.responseProviderSucces.bind(this)
+		this.responseProviderFailure = this.responseProviderFailure.bind(this)
+		this.handleSubmit = this.handleSubmit.bind(this)
+		this.handleOperation = this.handleOperation.bind(this)
+	}
+
+	responseProviderSucces(response){
 		
-		<div className = 'principal'>
-			<div  className = 'page-login'>
-				<Row type = 'flex' justify = 'space-between'>
-					<Col span = {14}
-						className = 'col-content-slogan'>
-						<div style = {{height: '100vh'}}>
-							<h1>¡Sientete poderoso!</h1>
-							<h2>Solo con nuestro excelente servicio de monitoreo</h2>
-						</div>
-					</Col>
-					<Col><LoginRegisterUserContainer/></Col>
-				</Row>
+		const { converToken } = this.props
+		converToken(response.Zi.access_token)
+	}
+
+	responseProviderFailure(response){
+		
+		this.props.setMessageOperation({type : 'error', message : CODES_OPERATIONS.False.LOGIN_OPERATION})
+	}
+
+	handleSubmit(evt){
+
+		const register_form = document.forms.formulario_registro
+		const elements_form = register_form
+
+		const data_user = {
+			name : elements_form.name,
+			correo : elements_form.email,
+			password : elements_form.password
+		}
+		
+		this.props.initRegistration(data_user)		
+	}
+
+	handleOperation(visible){
+		this.props.setVisibleLogin(visible)
+	}
+
+	render(){
+		return(
+			
+			<div className = 'principal'>
+
+				<MessageOperation alert = {this.props.message_operation} />
+
+				<div  className = 'page-login'>
+					<Row 
+						type = 'flex' 
+						justify = 'space-between'>
+						<Col lg = {18}
+							md = {16}
+							sm = {0}
+							xs = {0}
+							className = 'content-image'>
+							<Icon 
+								component = {logo}
+								className = 'logo-page-image logo-page-lr'
+							/>
+							<div className = 'text-loginpage'>
+								<h1>Sientete poderoso</h1>
+								<h2>Con nuestro sistema de localizacion</h2>
+							</div>
+
+							<div className = 'content-buttons'>
+								<button 
+									onClick = { () => this.handleOperation(false) }
+									className = {!this.props.visible_login?'initial-state':''}>Registrate</button>
+								<button
+									onClick = { () => this.handleOperation(true) }
+									className = {this.props.visible_login?'initial-state':''}>Logeate</button>
+							</div>
+						</Col>
+						<Col lg = {6}
+							md = {8}
+							sm = {24}
+							xs = {24}
+							className = 'content-form'>
+							<FormRegister 
+								handleSubmit = {this.handleSubmit} 
+								registering = {this.props.is_registering}
+								initRegistration =  {this.props.initRegistration}
+								visible_login = {this.props.visible_login}
+								handleOperation = {this.handleOperation}
+								logo = {
+									<Icon
+										component = {logo}
+										className = 'logo-form logo-page-lr'
+									/>}
+								/>
+
+							<FormSession
+								succesProvider = {this.responseProviderSucces}
+								succesFailure = {this.responseProviderFailure} 
+								visible_login = {this.props.visible_login}
+								authenticating = {this.props.is_authenticating} 
+								logo = {
+									<Icon
+										component = {logo}
+										className = 'logo-form logo-page-lr'
+									/>}
+								/>
+						</Col>
+					</Row>
+				</div>
 			</div>
-		</div>
-	)
+		)
+	}
 }
 
-export default LoginPage
+const mapStateToProps = state => {
+	return({
+		visible_login : state.visible_login,
+		message_operation : state.message_operation,
+		is_authenticating : state.authentication.is_authenticating,
+		is_authenticated : state.authentication.is_authenticated,
+		is_registering : state.authentication.is_registering,
+		is_registered : state.registration.is_registered,
+		token_data : state.authentication.acces_token,
+		data_user : state.authentication.data_user
+	})
+}
+
+const mapDispatchToProps = {
+	converToken,
+	initRegistration,
+	setVisibleLogin
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginPage)

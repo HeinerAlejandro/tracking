@@ -1,11 +1,9 @@
 import React from 'react'
-import SocialButtons from './SocialButtons'
-import { Form, Input, Select, Checkbox, Button, AutoComplete } from 'antd'
+import { Form, Input, Checkbox, Button, Icon } from 'antd'
+
 import './styles.css'
 
 const FormItem = Form.Item;
-const Option = Select.Option;
-
 
 class RegistrationForm extends React.Component {
 
@@ -54,41 +52,51 @@ class RegistrationForm extends React.Component {
     const { getFieldDecorator } = this.props.form;
 
     const formItemLayout = {
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 8 },
-      },
       wrapperCol: {
-        xs: { span: 24 },
-		sm: { span: 16 },
-      },
+        xs: {
+          span: 10,
+          offset: 2
+        },
+        sm: {
+          span: 20,
+          offset: 2
+        },
+        md: {
+          span : 16,
+          offset : 4
+        }, 
+        lg: {
+          span : 16,
+          offset : 4
+        }
+      }
     };
     const tailFormItemLayout = {
       wrapperCol: {
         xs: {
-          span: 24,
-          offset: 0,
+          span: 16,
+          offset: 4
         },
         sm: {
           span: 16,
-          offset: 8,
+          offset: 4
         },
+        lg : {
+          span : 16,
+          offset : 4
+        }
       },
     };
-    const prefixSelector = getFieldDecorator('prefix', {
-      initialValue: '86',
-    })(
-      <Select style={{ width: 70 }}>
-        <Option value="86">+86</Option>
-        <Option value="87">+87</Option>
-      </Select>
-    );
-
+  
     return (
-      <Form onSubmit={this.handleSubmit}>
+      <Form onSubmit={this.handleSubmit}
+            layout = 'vertical'
+            style = {{display : !this.props.visible_login?'block':'none'}}
+            className = 'formr'>
+        {this.props.logo}
+        <h2 style = {{width : '100%', textAlign : 'center'}}>¡Suscribete!</h2>
         <FormItem
           {...formItemLayout}
-          label="E-mail"
         >
           {getFieldDecorator('email', {
             rules: [{
@@ -97,26 +105,41 @@ class RegistrationForm extends React.Component {
               required: true, message: 'Please input your E-mail!',
             }],
           })(
-            <Input />
+            <Input
+              size = 'large'
+              placeholder = 'correo'
+              prefix = {
+                <Icon
+                  type = 'mail' 
+                  style = {{color : 'gray'}} 
+                />
+              }
+            />
           )}
         </FormItem>
 
 		<FormItem
           {...formItemLayout}
-          label="names"
         >
           {getFieldDecorator('names', {
             rules: [{
               required: true, message: 'Please input your E-mail!',
             }, ],
           })(
-            <Input />
+            <Input
+              size = 'large'
+              prefix = {
+                <Icon
+                  type = 'smile'
+                  style = {{color : 'gray'}}
+                 />
+              }
+              placeholder = 'nombres'/>
           )}
         </FormItem>
 
         <FormItem
           {...formItemLayout}
-          label="Password"
         >
           {getFieldDecorator('password', {
             rules: [{
@@ -125,12 +148,21 @@ class RegistrationForm extends React.Component {
               validator: this.validateToNextPassword,
             }],
           })(
-            <Input type="password" />
+            <Input
+              type="password" 
+              size = 'large'
+              prefix = {
+                <Icon
+                  type = 'lock'
+                  style = {{color : 'gray'}}  
+                />
+              }
+              placeholder = 'contraseña'  
+            />
           )}
         </FormItem>
         <FormItem
           {...formItemLayout}
-          label="Confirm"
         >
           {getFieldDecorator('confirm', {
             rules: [{
@@ -139,7 +171,11 @@ class RegistrationForm extends React.Component {
               validator: this.compareToFirstPassword,
             }],
           })(
-            <Input type="password" onBlur={this.handleConfirmBlur} />
+            <Input
+              type="password"
+              size = 'large'
+              onBlur={this.handleConfirmBlur}
+              prefix = {<Icon type = 'lock' style = {{color : 'gray'}} />} placeholder = 'verificacion' />
           )}
         </FormItem>
         
@@ -147,25 +183,32 @@ class RegistrationForm extends React.Component {
           {getFieldDecorator('agreement', {
             valuePropName: 'checked',
           })(
-            <Checkbox>I have read the <a href="">agreement</a></Checkbox>
+            <Checkbox>ya lei el <a href="">acuerdo</a></Checkbox>
           )}
         </FormItem>
-      
-		<FormItem {...tailFormItemLayout}>
-          <SocialButtons 
-			  successProvider = {this.props.successProvider}
-			  successFailure = {this.props.successFailure}
-		  />
+    
+		    <FormItem {...formItemLayout}>
+          <Button
+            type="primary"
+            className = 'button-login-register'>
+              Registrese
+            </Button>
         </FormItem>
 
-		<FormItem {...tailFormItemLayout}>
-          <Button type="primary" htmlType="submit">Register</Button>
-        </FormItem>
+            
+        <FormItem  {...tailFormItemLayout}>
+          <span>¿ya tienes <button 
+                          onClick = {this.props.handleOperation}
+                          style = {{background : 'none', border : 'none'}} >
+                          ¿cuenta?
+                        </button>
+        </span>
+       </FormItem>
       </Form>
-    );
+    )
   }
 }
 
-const WrappedRegistrationForm = Form.create()(RegistrationForm);
+const WrappedRegistrationForm = Form.create()(RegistrationForm)
 
 export default WrappedRegistrationForm

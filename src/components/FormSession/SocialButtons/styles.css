@@ -1,0 +1,12 @@
+.login-button{
+    height: 35px;
+    width: 100%;
+}
+
+.button-login-register{
+    background:none;
+}
+.login-button span {
+    padding: 0;
+    line-height: 0;
+}
