@@ -1,18 +1,20 @@
-import React, { Component, Fragment } from 'react'
+import React, { Fragment } from 'react'
 import { message } from 'antd'
 
 const showMessage = alert =>{
 
     switch(alert.type){
         case 'error':
-            message.error(alert.message)
-            break;
-        case 'sucess':
-            message.success(alert.message)
-    }
+            message.error(alert.message, 5)
+            break
+        default:
+            message.success(alert.message, 5)
+            break
+        
+    }   
 }
 
-const MessageOperation = ({alert}) => {
+const MessageOperation = ({alert, setMessageOperation}) => {
 
     return(
         <>

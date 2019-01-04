@@ -7,7 +7,9 @@ import { CODES_OPERATIONS } from './../../constants/withTokens'
 import { withRouter } from 'react-router'
 import {converToken,
 		initRegistration,
-		setVisibleLogin} from './../../actions/LoginRegisterAction'
+		initAuthentication,
+		setVisibleLogin,
+		setMessageOperation} from './../../actions/LoginRegisterAction'
 
 import { Row, Col, Icon } from 'antd'
 import './styles.css'
@@ -49,16 +51,22 @@ class LoginPage extends Component{
 		this.props.initRegistration(data_user)		
 	}
 
-	handleOperation(visible){
-		this.props.setVisibleLogin(visible)
+	handleOperation(){
+		this.props.visible_login?this.props.setVisibleLogin(false):this.props.setVisibleLogin(true)
 	}
 
 	render(){
+
+		var text_form = this.props.visible_login?"¿Aun no tienes una ":"¿ya tienes una "
+
 		return(
 			
 			<div className = 'principal'>
 
-				<MessageOperation alert = {this.props.message_operation} />
+				<MessageOperation
+					alert = {this.props.message_operation}
+					setMessageOperation = {this.props.setMessageOperation}
+					/>
 
 				<div  className = 'page-login'>
 					<Row 
@@ -97,7 +105,6 @@ class LoginPage extends Component{
 								registering = {this.props.is_registering}
 								initRegistration =  {this.props.initRegistration}
 								visible_login = {this.props.visible_login}
-								handleOperation = {this.handleOperation}
 								logo = {
 									<Icon
 										component = {logo}
@@ -109,13 +116,23 @@ class LoginPage extends Component{
 								succesProvider = {this.responseProviderSucces}
 								succesFailure = {this.responseProviderFailure} 
 								visible_login = {this.props.visible_login}
-								authenticating = {this.props.is_authenticating} 
+								authenticating = {this.props.is_authenticating}
+								initAuthentication = {this.props.initAuthentication}
 								logo = {
 									<Icon
 										component = {logo}
 										className = 'logo-form logo-page-lr'
 									/>}
 								/>
+
+								<span 
+									style = {{color:'white', marginLeft: '50px'}}>{text_form}
+										<button 
+											onClick = {this.handleOperation}
+											style = {{background : 'none', border : 'none', color : 'blue'}} >
+												cuenta?
+										</button>
+								</span>
 						</Col>
 					</Row>
 				</div>
@@ -140,7 +157,9 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
 	converToken,
 	initRegistration,
-	setVisibleLogin
+	setVisibleLogin,
+	setMessageOperation,
+	initAuthentication
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginPage)
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(LoginPage))

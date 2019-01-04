@@ -32,13 +32,25 @@ const setVisibleLogin = playload => ({type : SET_VISIBLE_LOGIN, playload})
 
 const setMessageOperation = payload => ({type : SET_MESSAGE, payload})
 
+const initAuthentication = data_user => dispatch =>{
+
+	fetch("http://127.0.0.1:8000/accounts/login")
+		.then( response => console.log(response))
+		
+}
+
 const initRegistration = data_user => dispatch => {
+
+	var header = new Headers()
+
+	header.append('Content-Type', 'application/json')
+	header.append('Accept', 'application/json')
+	//header.append('csrftoken', readCookie('csrftoken'))
 
 	const HEADER = {
 		method : 'POST',
-		headers : {
-			accept : 'application/json'
-		},
+		headers: header,
+		mode : 'cors',
 		body : data_user
 	}
 
@@ -46,16 +58,26 @@ const initRegistration = data_user => dispatch => {
 
 	console.log("enviando formulario de registro")
 
-	fetch("http://127.0.0.1:8000/account/registration", HEADER)
-		.then( response => response.json())
-		.then( ({access_token, status}) => {
-			dispatch(setRegistering(!status))
-			dispatch(setRegistered(status))
-			dispatch(setTokenConvertSuccess(access_token, { type : 'success', 'message' : CODES_OPERATIONS.True.REGISTER_OPERATION}))
+
+	fetch("http://127.0.0.1:8000/accounts/registration/", HEADER)
+		.then( response => response.json() )
+		.then( response  => {
+			throw(response)
+			//dispatch(setTokenConvertSuccess(access_token, { type : 'success', 'message' : CODES_OPERATIONS.True.REGISTER_OPERATION}))
 		}).catch( err => {
+			console.log("en error")
+			console.log(err)
+			var message = ""
+
 			dispatch(setRegistering(false))
 			dispatch(setRegistered(false))
-			dispatch(setMessageOperation({type : 'error' , message : CODES_OPERATIONS.False.REGISTER_OPERATION}))
+
+			for(let key in err){
+				for(let key2 in err[key]){
+					message = key + ':' + err[key][key2]
+					dispatch(setMessageOperation({type : 'error' , message : message}))
+				}
+			}
 		})
 }
 
@@ -128,6 +150,7 @@ export {
 	FAILURE_TOKEN_CONVERT,
 	setMessageOperation,
 	initRegistration,
+	initAuthentication,
 	setVisibleLogin,
 	setConvertTokenFailure,
 	setTokenConvertSuccess,

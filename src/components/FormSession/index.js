@@ -12,7 +12,12 @@ class FormSession extends React.Component {
 	  e.preventDefault();
 	  this.props.form.validateFieldsAndScroll((err, values) => {
 		if (!err) {
-		  console.log('Received values of form: ', values);
+		  const data_user = JSON.stringify({
+				email : this.props.form.getFieldValue('email'),
+				password : this.props.form.getFieldValue('password'),
+			})
+
+			this.props.initAuthentication(data_user)
 		}
 	  });
 	}
@@ -84,7 +89,7 @@ class FormSession extends React.Component {
 					offset = {2}>
 					<FormItem
 					>
-						{getFieldDecorator('email', {
+						{getFieldDecorator('emailogin', {
 							rules: [{
 							type: 'email', message: 'The input is not valid E-mail!',
 							}, {
@@ -110,7 +115,7 @@ class FormSession extends React.Component {
 				<FormItem
 			
 				>
-				{getFieldDecorator('password', {
+				{getFieldDecorator('passwordlogin', {
 					rules: [{
 					required: true, message: 'Please input your password!',
 					}, {
@@ -135,7 +140,8 @@ class FormSession extends React.Component {
 			<FormItem  {...buttonsLayout}>
 				<Button
 						type="primary"
-						className = 'button-login-register'>
+						className = 'button-login-register'
+						htmlType = 'submit'>
 							¡Conectate!
 				</Button>
 

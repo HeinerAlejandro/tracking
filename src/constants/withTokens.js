@@ -9,7 +9,7 @@ const BACKENDS_PROVIDER = {
 const CODES_OPERATIONS = {
 	True : {
 		LOGIN_OPERATION : "¡Su acceso se completo con exito!",
-		REGISTER_OPERATION : "¡Sus datos se registraron con exito!"
+		REGISTER_OPERATION : "¡Sus datos se registraron con exito!, ahora verifique su cuenta a traves de su correo electronico"
 	},
 	False : {	
 		LOGIN_OPERATION : "Error al iniciar sesion, compruebe su conexion, o intentelo mas tarde",
