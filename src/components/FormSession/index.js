@@ -13,9 +13,11 @@ class FormSession extends React.Component {
 	  this.props.form.validateFieldsAndScroll((err, values) => {
 		if (!err) {
 		  const data_user = JSON.stringify({
-				email : this.props.form.getFieldValue('email'),
-				password : this.props.form.getFieldValue('password'),
+				email : this.props.form.getFieldValue('emailogin'),
+				password : this.props.form.getFieldValue('passwordlogin'),
 			})
+
+			console.log(this.props.form.getFieldValue('passwordlogin'))
 
 			this.props.initAuthentication(data_user)
 		}
@@ -54,7 +56,7 @@ class FormSession extends React.Component {
 			offset : 3
 		  }
 		}
-		}
+	}
 		
 		const buttonsLayout = {
 			wrapperCol : {

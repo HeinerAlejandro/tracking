@@ -9,7 +9,6 @@ function hasErrors(fieldsError) {
 }
 
 class RegistrationForm extends React.Component {
-
   
   handleSubmit = (e) => {
     e.preventDefault();
@@ -31,7 +30,6 @@ class RegistrationForm extends React.Component {
 
   handleConfirmBlur = (e) => {
     const value = e.target.value;
-    //this.setState({ confirmDirty: this.state.confirmDirty || !!value });
   }
 
   compareToFirstPassword = (rule, value, callback) => {

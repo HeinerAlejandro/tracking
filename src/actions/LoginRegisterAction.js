@@ -5,6 +5,8 @@ import {URL_SERVER,
 		BACKENDS_PROVIDER,
 		CODES_OPERATIONS} from './../constants/withTokens'
 
+import readObjectResponseOperation from './../services'
+
 const SET_USER_LOG = 'SET_USER_LOG'
 
 const SET_VISIBLE_LOGIN = 'SET_VISIBLE_LOGIN'
@@ -22,6 +24,10 @@ const REGISTER_USER = 'REGISTER_USER'
 
 const SET_MESSAGE = 'SET_MESSAGE'
 
+//se debe agregar la funcion de accion
+const ADD_DEVICE = 'ADD_DEVICE'
+const SELECT_DEVICE = 'SELECT_DEVICE'
+
 const setAuthenticating = playload => ({type : SET_AUTHENTICATING, playload})
 const setAuthenticated = playload => ({type : SET_AUTHENTICATED, playload})
 
@@ -32,20 +38,56 @@ const setVisibleLogin = playload => ({type : SET_VISIBLE_LOGIN, playload})
 
 const setMessageOperation = payload => ({type : SET_MESSAGE, payload})
 
-const initAuthentication = data_user => dispatch =>{
+const initAuthentication = data_user => async dispatch =>{
 
-	fetch("http://127.0.0.1:8000/accounts/login")
-		.then( response => console.log(response))
+	let headers = new Headers()
+
+	headers.append('Content-Type', 'application/json')
+	headers.append('Accept', 'application/json')
+
+	const options = {
+		method : 'POST',
+		headers,
+		mode : 'cors',
+		body : data_user
+	}
+
+	try {
+
+		let response = await fetch("http://127.0.0.1:8000/accounts/login/", options)
+
+		if(!response.ok)
+			throw response
+
+		let json = await response.json()
+		console.log(json)
+
+		var message = ''
+
+		try {
+			let token_key = json['key']
+			dispatch(setTokenConvertSuccess(token_key))
+		} catch (error) {
+			console.log("error al obtener llave")
+			throw json
+		}
 		
+
+		
+	} catch (error) {
+		console.log("en catch externo")
+		let json = await error.json()
+		console.log(json)
+		dispatch(setMessageOperation({type : 'error', message : json.non_field_errors}))
+	}	
 }
 
-const initRegistration = data_user => dispatch => {
+const initRegistration = data_user => async dispatch => {
 
 	var header = new Headers()
 
 	header.append('Content-Type', 'application/json')
 	header.append('Accept', 'application/json')
-	//header.append('csrftoken', readCookie('csrftoken'))
 
 	const HEADER = {
 		method : 'POST',
@@ -59,26 +101,25 @@ const initRegistration = data_user => dispatch => {
 	console.log("enviando formulario de registro")
 
 
-	fetch("http://127.0.0.1:8000/accounts/registration/", HEADER)
-		.then( response => response.json() )
-		.then( response  => {
-			throw(response)
-			//dispatch(setTokenConvertSuccess(access_token, { type : 'success', 'message' : CODES_OPERATIONS.True.REGISTER_OPERATION}))
-		}).catch( err => {
-			console.log("en error")
-			console.log(err)
-			var message = ""
+	try {
 
-			dispatch(setRegistering(false))
-			dispatch(setRegistered(false))
+		const response = await fetch("http://127.0.0.1:8000/accounts/registration/", HEADER)
+		const object = await response.json()
 
-			for(let key in err){
-				for(let key2 in err[key]){
-					message = key + ':' + err[key][key2]
-					dispatch(setMessageOperation({type : 'error' , message : message}))
-				}
-			}
-		})
+		if(!response.ok)
+			throw object 
+
+		dispatch(setMessageOperation({type : 'success', message : response.detail}))
+		
+	} catch (err) {
+		console.log("en error")
+		console.log(err)
+
+		dispatch(setRegistering(false))
+		dispatch(setRegistered(false))
+
+		readObjectResponseOperation(err, dispatch, 'error')
+	}
 }
 
 const setConvertTokenFailure = operation => dispatch => {
@@ -89,12 +130,17 @@ const setConvertTokenFailure = operation => dispatch => {
 }
 
 const setTokenConvertSuccess = (payload, operation) => dispatch  => {
+	
+	if(typeof payload == 'object'){
 
-	let expiryDate = Math.round(new Date().getTime() / 1000) + payload.expires_in
+		let expiryDate = Math.round(new Date().getTime() / 1000) + payload.expires_in
 
-	localStorage.setItem("access_token_converted", payload.access_token)
-  	localStorage.setItem("refresh_token_converted", payload.refresh_token)
- 	localStorage.setItem("access_token_expires_in", expiryDate)
+		localStorage.setItem("access_token_converted", payload.access_token)
+		localStorage.setItem("refresh_token_converted", payload.refresh_token)
+		localStorage.setItem("access_token_expires_in", expiryDate)
+		
+	}else
+		localStorage.setItem("access_token_converted", payload.access_token)
 
 	dispatch(setMessageOperation(operation))
 	
@@ -104,7 +150,6 @@ const setTokenConvertSuccess = (payload, operation) => dispatch  => {
   	}
 }
 
-// ACABO DE HACER MODIFICACIONES EN ESTE ARCHIVO...VE LA CONSOLA
 const converToken = acces_token => dispatch => {
 	const searchParams = new URLSearchParams()
 	
@@ -148,6 +193,8 @@ export {
 	REGISTER_USER,
 	SUCCESS_TOKEN_CONVERT,
 	FAILURE_TOKEN_CONVERT,
+	ADD_DEVICE,
+	SELECT_DEVICE,
 	setMessageOperation,
 	initRegistration,
 	initAuthentication,

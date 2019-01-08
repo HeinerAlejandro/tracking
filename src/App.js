@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+
 import './App.css';
 import LoginPage from './views/LoginPage'
 import 'antd/dist/antd.css'
-import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import { AccountRouter } from './Routes/AccountRouter'
+import { isAuthenticated } from './actions/LoginRegisterAction'
+import { dispatch } from 'react-redux'
 
+if(localStorage.getItem('access_token_converted'))
+  dispatch(isAuthenticated(true))
 
 class App extends Component {
 
@@ -14,14 +19,18 @@ class App extends Component {
     return (
       <Router>
         <Switch>
-          <Route path = '/account'
-                exact
-                component = {this.renderContainer}
+
+          <AccountRouter 
+            exact
+            path = '/account'
+            component = {this.renderContainer()}
           />
+      
           <Route path = '/'
                 exact
                 component = {LoginPage}       
           />   
+          
         </Switch>
       </Router>
     )

@@ -30,6 +30,10 @@ class LoginPage extends Component{
 		
 		const { converToken } = this.props
 		converToken(response.Zi.access_token)
+
+		if(this.props.is_registered)
+			this.props.history.push('/account/')
+
 	}
 
 	responseProviderFailure(response){

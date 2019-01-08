@@ -1,10 +1,13 @@
-export function readCookie(nombre) {
-    var lista = document.cookie.split(";");
-    for (i in lista) {
-        var busca = lista[i].search(nombre);
-        if (busca > -1) {micookie=lista[i]}
+import { setMessageOperation } from './actions/LoginRegisterAction'
+
+const readObjectResponseOperation = (object, dispatch, type) => {
+    var message = ""
+    for(let key in object){
+        for(let key2 in object[key]){
+            message = key + ':' + object[key][key2]
+            dispatch(setMessageOperation({type , message : message}))
         }
-    var igual = micookie.indexOf("=");
-    var valor = micookie.substring(igual+1);
-    return valor;
+    }
 }
+
+export default readObjectResponseOperation

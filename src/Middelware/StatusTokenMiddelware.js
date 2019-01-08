@@ -16,8 +16,6 @@ const obtainNewToken = body => {
         .then(response => response.json())
 }
 
-
-
 const refreshTokenServer = ({ dispatch, getStore }) => next => action => {
 
     if(typeof action == 'function'){
@@ -52,9 +50,9 @@ const refreshTokenServer = ({ dispatch, getStore }) => next => action => {
                 dispatch(setTokenConvertSuccess(response_with_new_token)) 
             }
         }
-
-        return next(action)
     }
+
+    return next(action)
 }
 
 export default refreshTokenServer
