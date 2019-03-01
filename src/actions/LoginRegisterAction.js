@@ -1,13 +1,19 @@
 import URLSearchParams from "url-search-params";
+import history from './../history'
+import { message } from 'antd'
 import {URL_SERVER, 
 		CLIENT_ID_DJANGO,
 		CLIENT_SECRET_DJANGO, 
 		BACKENDS_PROVIDER,
 		CODES_OPERATIONS} from './../constants/withTokens'
 
-import readObjectResponseOperation from './../services'
+import {
+	readObjectResponseOperation,
+	showMessage } from './../services'
 
 const SET_USER_LOG = 'SET_USER_LOG'
+
+const SET_VISIBLE_RESET_PASSWORD = 'SET_VISIBLE_RESET_PASSWORD'
 
 const SET_VISIBLE_LOGIN = 'SET_VISIBLE_LOGIN'
 
@@ -24,21 +30,29 @@ const REGISTER_USER = 'REGISTER_USER'
 
 const SET_MESSAGE = 'SET_MESSAGE'
 
-//se debe agregar la funcion de accion
-const ADD_DEVICE = 'ADD_DEVICE'
-const SELECT_DEVICE = 'SELECT_DEVICE'
+const SET_STEP = 'SET_STEP'
 
-const setAuthenticating = playload => ({type : SET_AUTHENTICATING, playload})
-const setAuthenticated = playload => ({type : SET_AUTHENTICATED, playload})
+const SENT_EMAIL_RESET_PASSWORD = 'SENT_EMAIL_RESET_PASSWORD'
+const SENDING_EMAIL_RESET_PASSWORD = 'SENDING_EMAIL_RESET_PASSWORD'
 
-const setRegistering = playload => ({type : SET_REGISTERING, playload})
-const setRegistered = playload => ({type : SET_REGISTERED, playload})
+const setUserLog = payload => ({ type : SET_USER_LOG, payload })
 
-const setVisibleLogin = playload => ({type : SET_VISIBLE_LOGIN, playload})
+const sendingEmailResetPassword = payload => ({type : SENDING_EMAIL_RESET_PASSWORD, payload})
 
-const setMessageOperation = payload => ({type : SET_MESSAGE, payload})
+const setStep = payload => ({type : SET_STEP, payload})
 
-const initAuthentication = data_user => async dispatch =>{
+const setAuthenticating = payload => ({type : SET_AUTHENTICATING, payload})
+const setAuthenticated = payload => ({type : SET_AUTHENTICATED, payload})
+
+const setRegistering = payload => ({type : SET_REGISTERING, payload})
+const setRegistered = payload => ({type : SET_REGISTERED, payload})
+
+const setVisibleResetPassword = payload => ({type : SET_VISIBLE_RESET_PASSWORD, payload})
+
+const setVisibleLogin = payload => ({type : SET_VISIBLE_LOGIN, payload})
+
+
+const initAuthentication = data_user => async dispatch => {
 
 	let headers = new Headers()
 
@@ -52,6 +66,8 @@ const initAuthentication = data_user => async dispatch =>{
 		body : data_user
 	}
 
+	dispatch(setAuthenticating(true))
+
 	try {
 
 		let response = await fetch("http://127.0.0.1:8000/accounts/login/", options)
@@ -62,11 +78,15 @@ const initAuthentication = data_user => async dispatch =>{
 		let json = await response.json()
 		console.log(json)
 
-		var message = ''
 
 		try {
 			let token_key = json['key']
-			dispatch(setTokenConvertSuccess(token_key))
+			console.log("mi token es:")
+			console.log(token_key)
+			dispatch(setTokenConvertSuccess(token_key, null))
+			dispatch(setAuthenticated(true))
+			//history.push('/account/')
+
 		} catch (error) {
 			console.log("error al obtener llave")
 			throw json
@@ -78,8 +98,75 @@ const initAuthentication = data_user => async dispatch =>{
 		console.log("en catch externo")
 		let json = await error.json()
 		console.log(json)
-		dispatch(setMessageOperation({type : 'error', message : json.non_field_errors}))
+		showMessage({type : 'error', message : json.non_field_errors})
 	}	
+
+	dispatch(setAuthenticating(false))
+}
+
+const sendUuidResetPassword = data => async dispatch => {
+	const header = new Headers()
+	header.append('Content-Type', 'application/json')
+
+	try{
+		const response = await fetch('http://127.0.0.1:8000/accounts/password/reset/confirm/', {
+									method : 'POST',
+									mode : 'cors',
+									headers: header,
+									body : data
+								})
+
+		
+
+		if(!response.ok)
+			throw(response)
+
+		const json = await response.json()
+								
+		message.success(json.detail)
+
+	}catch(err){
+		console.log(await err.json())
+	}
+	
+}
+
+const sendEmailResetPassword = email => async dispatch => {
+	
+	dispatch(sendingEmailResetPassword(true))
+
+	const header = new Headers()
+	header.append('Content-Type', 'application/json')
+
+	try{
+	
+		const response = await fetch('http://127.0.0.1:8000/accounts/password/reset/', {
+									method : 'POST',
+									mode : 'cors',
+									headers: header,
+									body : email
+								})
+
+		
+
+		if(!response.ok)
+			throw(response)
+
+		const json = await response.json()
+								
+		message.success(json.detail)
+		
+		dispatch(sendingEmailResetPassword(false))							
+		dispatch(setStep(1))
+
+	}catch(err){
+
+		dispatch(sendingEmailResetPassword(false))
+		
+		console.log(await err.json())
+			
+	}
+
 }
 
 const initRegistration = data_user => async dispatch => {
@@ -109,8 +196,9 @@ const initRegistration = data_user => async dispatch => {
 		if(!response.ok)
 			throw object 
 
-		dispatch(setMessageOperation({type : 'success', message : response.detail}))
-		
+
+		showMessage({type : 'success', message : response.detail})
+
 	} catch (err) {
 		console.log("en error")
 		console.log(err)
@@ -126,13 +214,13 @@ const setConvertTokenFailure = operation => dispatch => {
 
 	dispatch(setAuthenticating(false))
 	dispatch(setAuthenticated(false))
-	dispatch(setMessageOperation(operation))
+	operation && showMessage(operation)
 }
 
 const setTokenConvertSuccess = (payload, operation) => dispatch  => {
-	
-	if(typeof payload == 'object'){
-
+	console.log(payload)
+	if(payload.key){
+		
 		let expiryDate = Math.round(new Date().getTime() / 1000) + payload.expires_in
 
 		localStorage.setItem("access_token_converted", payload.access_token)
@@ -140,9 +228,12 @@ const setTokenConvertSuccess = (payload, operation) => dispatch  => {
 		localStorage.setItem("access_token_expires_in", expiryDate)
 		
 	}else
-		localStorage.setItem("access_token_converted", payload.access_token)
+		localStorage.setItem("access_token_converted", payload)
+		
 
-	dispatch(setMessageOperation(operation))
+	dispatch(setAuthenticated(true))
+	
+	operation && showMessage(operation)
 	
 	return {
     	type: SUCCESS_TOKEN_CONVERT,
@@ -150,14 +241,16 @@ const setTokenConvertSuccess = (payload, operation) => dispatch  => {
   	}
 }
 
-const converToken = acces_token => dispatch => {
+const converToken = access_token => dispatch => {
+
+	console.log(access_token)
 	const searchParams = new URLSearchParams()
 	
 	searchParams.set("grant_type", "convert_token");
     searchParams.set("client_id", CLIENT_ID_DJANGO);
     searchParams.set("client_secret", CLIENT_SECRET_DJANGO);
     searchParams.set("backend", BACKENDS_PROVIDER.GOOGLE);
-    searchParams.set("token", acces_token);
+    searchParams.set("token", access_token);
 
 	dispatch(setAuthenticating(true))
 	
@@ -184,6 +277,9 @@ const converToken = acces_token => dispatch => {
 
 export {
 	SET_USER_LOG,
+	SENT_EMAIL_RESET_PASSWORD,
+	SENDING_EMAIL_RESET_PASSWORD,
+	SET_VISIBLE_RESET_PASSWORD,
 	SET_VISIBLE_LOGIN,
 	SET_MESSAGE,
 	SET_REGISTERING,
@@ -193,11 +289,15 @@ export {
 	REGISTER_USER,
 	SUCCESS_TOKEN_CONVERT,
 	FAILURE_TOKEN_CONVERT,
-	ADD_DEVICE,
-	SELECT_DEVICE,
-	setMessageOperation,
+	SET_STEP,
+	setUserLog,
+	setStep,
 	initRegistration,
 	initAuthentication,
+	sendingEmailResetPassword,
+	sendUuidResetPassword,
+	sendEmailResetPassword,
+	setVisibleResetPassword,
 	setVisibleLogin,
 	setConvertTokenFailure,
 	setTokenConvertSuccess,

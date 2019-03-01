@@ -1,36 +1,34 @@
 import React, { Component } from 'react';
-
-import './App.css';
+import history from './history'
+import './App.scss';
 import LoginPage from './views/LoginPage'
 import 'antd/dist/antd.css'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { AccountRouter } from './Routes/AccountRouter'
-import { isAuthenticated } from './actions/LoginRegisterAction'
-import { dispatch } from 'react-redux'
+import { setAuthenticated } from './actions/LoginRegisterAction'
+import { store } from './store'
+import UserInterfazView from './views/UserInterfacePage'
 
-if(localStorage.getItem('access_token_converted'))
-  dispatch(isAuthenticated(true))
+
+if(localStorage.getItem('access_token_converted')){
+  store.dispatch(setAuthenticated(true))
+  //history.push('/account')
+}
 
 class App extends Component {
 
-  renderContainer = () => (<h1>UserView</h1>)
-
   render() {
+  
     return (
       <Router>
         <Switch>
-
-          <AccountRouter 
-            exact
-            path = '/account'
-            component = {this.renderContainer()}
-          />
-      
+          <Route path = '/account'
+                component = {UserInterfazView}       
+          />    
           <Route path = '/'
                 exact
                 component = {LoginPage}       
-          />   
-          
+          />             
         </Switch>
       </Router>
     )

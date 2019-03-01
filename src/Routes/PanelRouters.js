@@ -1,0 +1,14 @@
+import React from 'react';
+import DefaultLayout from './../components/UserInterface';
+
+const Dashboard = React.lazy(() => import('./../components/Dashboard'));
+const Settings = React.lazy(() => import('./../components/Settings'));
+
+// https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
+const routes = [
+  { path: '/account', exact: true, name: 'Home', component: DefaultLayout },
+  { path: '/account/dashboard', exact: true, name: 'Dashboard', component: Dashboard },
+  { path: '/account/settings', exact: true,  name: 'Settings', component: Settings },
+];
+
+export default routes;

@@ -1,5 +1,6 @@
 import React from 'react'
 import SocialButtons from './SocialButtons'
+import ResetPasswordView from './../../views/ResetPasswordView'
 import { Form, Input, Button, Icon, Col } from 'antd'
 import { ReactComponent as google } from './../../resources/google-plus.svg'
 
@@ -9,7 +10,7 @@ const InputGroup = Input.Group
 class FormSession extends React.Component {
  
 	handleSubmit = (e) => {
-	  e.preventDefault();
+	  e.preventDefault()
 	  this.props.form.validateFieldsAndScroll((err, values) => {
 		if (!err) {
 		  const data_user = JSON.stringify({
@@ -17,14 +18,13 @@ class FormSession extends React.Component {
 				password : this.props.form.getFieldValue('passwordlogin'),
 			})
 
-			console.log(this.props.form.getFieldValue('passwordlogin'))
-
 			this.props.initAuthentication(data_user)
+
+			this.props.handleSessionSubmit()
 		}
 	  });
 	}
-  
-  
+	
 	compareToFirstPassword = (rule, value, callback) => {
 	  const form = this.props.form;
 	  if (value && value !== form.getFieldValue('password')) {
@@ -80,87 +80,105 @@ class FormSession extends React.Component {
 		}
 	
 	  return (
-		<Form onSubmit={this.handleSubmit}
-			  style = {{display : this.props.visible_login?'block':'none', marginTop:'40vh'}}>
-			
-		{this.props.logo}
-			<h2 style = {{width : '100%', textAlign : 'center', marginTop : '-100px'}}>¡Inicia Sesion!</h2>
-			<InputGroup size = 'large'>
-				<Col
-					span = {10}
-					offset = {2}>
-					<FormItem
-					>
-						{getFieldDecorator('emailogin', {
-							rules: [{
-							type: 'email', message: 'The input is not valid E-mail!',
-							}, {
-							required: true, message: 'Please input your E-mail!',
-							}],
-						})(
-						<Input
-						size = 'large'
-						placeholder = 'correo'
-						prefix = {
-							<Icon
-								type = 'mail' 
-								style = {{color : 'gray'}} 
+		<>
+			<ResetPasswordView
+				visible = { this.props.visible_reset_password } 
+				resetPasswordUrls = { this.props.resetPasswordUrls }
+				/>
+				
+			<Form onSubmit = {this.handleSubmit}
+					style = {{display : this.props.visible_login?'block':'none', marginTop:'40vh'}}
+					name = 'form_session'>
+				
+			{this.props.logo}
+				<h2 style = {{width : '100%', textAlign : 'center', marginTop : '-100px'}}>¡Inicia Sesion!</h2>
+				<InputGroup size = 'large'>
+					<Col
+						span = {10}
+						offset = {2}>
+						<FormItem
+						>
+							{getFieldDecorator('emailogin', {
+								rules: [{
+								type: 'email', message: 'The input is not valid E-mail!',
+								}, {
+								required: true, message: 'Please input your E-mail!',
+								}],
+							})(
+							<Input
+							size = 'large'
+							placeholder = 'correo'
+							prefix = {
+								<Icon
+									type = 'mail' 
+									style = {{color : 'gray'}} 
+								/>
+							}
 							/>
+						)}
+				
+					</FormItem>
+					</Col>
+				
+				<Col  span = {10}>
+					<FormItem
+				
+					>
+					{getFieldDecorator('passwordlogin', {
+						rules: [{
+						required: true, message: 'Please input your password!',
+						}, {
+						validator: this.validateToNextPassword,
+						}],
+					})(
+						<Input
+							type="password" 
+							size = 'large'
+							prefix = {
+								<Icon
+									type = 'lock'
+									style = {{color : 'gray'}}  
+								/>
 						}
+						placeholder = 'contraseña'  
 						/>
 					)}
-			
-				</FormItem>
+
+				</FormItem>  
 				</Col>
-			
-			<Col  span = {10}>
-				<FormItem
-			
-				>
-				{getFieldDecorator('passwordlogin', {
-					rules: [{
-					required: true, message: 'Please input your password!',
-					}, {
-					validator: this.validateToNextPassword,
-					}],
-				})(
-					<Input
-						type="password" 
-						size = 'large'
-						prefix = {
-							<Icon
-								type = 'lock'
-								style = {{color : 'gray'}}  
-							/>
-					}
-					placeholder = 'contraseña'  
-					/>
-				)}
-		  </FormItem>  
-			</Col>
-		</InputGroup>
+			</InputGroup>
+			<p>
+				<a
+					onClick = { this.props.resetPasswordOperation }
+					style = {{marginLeft : '50px', width : '100%'}}
+					href = "#x">
+						¿se te olvido tu contraseña?
+				</a>
+			</p>
 			<FormItem  {...buttonsLayout}>
 				<Button
 						type="primary"
 						className = 'button-login-register'
-						htmlType = 'submit'>
+						htmlType = 'submit'
+						loading = {this.props.authenticating}>
 							¡Conectate!
 				</Button>
 
-		  </FormItem>
-		  <FormItem {...buttonsLayout}>
+			</FormItem>
+			<FormItem {...buttonsLayout}>
 				<SocialButtons 
 					successProvider = {this.props.successProvider}
 					successFailure = {this.props.successFailure}
 					google_icon = {google} 
-					/>
-    		</FormItem>
+				/>
+			</FormItem>
 		</Form>
-	  );
+	</>
+ );
 	}
   }
   
-const WrappedRegistrationForm = Form.create()(FormSession);
+const WrappedSessionForm = Form.create()(FormSession);
   
-export default WrappedRegistrationForm
+export default WrappedSessionForm
 

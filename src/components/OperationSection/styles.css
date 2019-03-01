@@ -1,0 +1,41 @@
+.operation-section{
+    width: 1000px;
+    margin : auto;
+}
+
+.section-tracking{
+    height: 60vh;
+    box-sizing: border-box;
+    display: inline-block;
+}
+
+.section-tracking label {
+    color: gray;
+}
+
+.element-operation{
+    height: 300px;
+}
+
+.panel-options{
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+}
+
+.input-panel-operation{
+    width: 250px;
+}
+
+.map{
+    width: 100%;
+}
+
+.device-selected svg{
+    fill: red;
+}
+
+.leaflet-div-icon {
+    background: transparent;
+    border: none;
+} 

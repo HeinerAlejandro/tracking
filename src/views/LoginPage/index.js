@@ -2,19 +2,22 @@ import React, {Component, Fragment} from 'react'
 import {connect} from 'react-redux'
 import FormRegister from './../../components/FormRegister'
 import FormSession from './../../components/FormSession'
-import MessageOperation from './../../components/MessageOperation'
 import { CODES_OPERATIONS } from './../../constants/withTokens'
 import { withRouter } from 'react-router'
-import {converToken,
+import {
+		converToken,
 		initRegistration,
 		initAuthentication,
+		setVisibleResetPassword,
 		setVisibleLogin,
-		setMessageOperation} from './../../actions/LoginRegisterAction'
+		setUserLog
+	} from './../../actions/LoginRegisterAction'
 
-import { Row, Col, Icon } from 'antd'
+import { Row, Col, Icon, message } from 'antd'
 import './styles.css'
 
 import  { ReactComponent as logo }  from './../../resources/location.svg'
+import { showMessage } from '../../services';
 
 class LoginPage extends Component{
 
@@ -24,21 +27,25 @@ class LoginPage extends Component{
 		this.responseProviderFailure = this.responseProviderFailure.bind(this)
 		this.handleSubmit = this.handleSubmit.bind(this)
 		this.handleOperation = this.handleOperation.bind(this)
+		this.resetPasswordOperation = this.resetPasswordOperation.bind(this)
+		this.handleSessionSubmit = this.handleSessionSubmit.bind(this)
 	}
 
 	responseProviderSucces(response){
-		
-		const { converToken } = this.props
+	
+		const { converToken, setUserLog } = this.props
+
 		converToken(response.Zi.access_token)
 
-		if(this.props.is_registered)
-			this.props.history.push('/account/')
+		setUserLog(response.profileObj)
+
+		this.props.history.push('account/dashboard')
 
 	}
 
 	responseProviderFailure(response){
 		
-		this.props.setMessageOperation({type : 'error', message : CODES_OPERATIONS.False.LOGIN_OPERATION})
+		showMessage({type : 'error', message : CODES_OPERATIONS.False.LOGIN_OPERATION})
 	}
 
 	handleSubmit(evt){
@@ -55,23 +62,35 @@ class LoginPage extends Component{
 		this.props.initRegistration(data_user)		
 	}
 
-	handleOperation(){
-		this.props.visible_login?this.props.setVisibleLogin(false):this.props.setVisibleLogin(true)
+	handleSessionSubmit(){
+		
+		if(this.props.is_authenticated)
+			this.props.history.push('/account/')
 	}
 
+	handleOperation(){
+		this.props.visible_login
+			? this.props.setVisibleLogin(false)
+			: this.props.setVisibleLogin(true)
+	}
+
+	resetPasswordOperation(){
+
+		(this.props.visible_reset_password)
+			? this.props.setVisibleResetPassword(false)
+			: this.props.setVisibleResetPassword(true)
+	}
+
+
 	render(){
+			
+		var alert = this.props.message_operation
 
 		var text_form = this.props.visible_login?"¿Aun no tienes una ":"¿ya tienes una "
 
 		return(
 			
 			<div className = 'principal'>
-
-				<MessageOperation
-					alert = {this.props.message_operation}
-					setMessageOperation = {this.props.setMessageOperation}
-					/>
-
 				<div  className = 'page-login'>
 					<Row 
 						type = 'flex' 
@@ -92,10 +111,10 @@ class LoginPage extends Component{
 
 							<div className = 'content-buttons'>
 								<button 
-									onClick = { () => this.handleOperation(false) }
+									onClick = { () => {if(this.props.visible_login)this.handleOperation(false)} }
 									className = {!this.props.visible_login?'initial-state':''}>Registrate</button>
 								<button
-									onClick = { () => this.handleOperation(true) }
+									onClick = { () => {if(!this.props.visible_login)this.handleOperation(true)} }
 									className = {this.props.visible_login?'initial-state':''}>Logeate</button>
 							</div>
 						</Col>
@@ -116,12 +135,16 @@ class LoginPage extends Component{
 									/>}
 								/>
 
-							<FormSession
-								succesProvider = {this.responseProviderSucces}
-								succesFailure = {this.responseProviderFailure} 
-								visible_login = {this.props.visible_login}
-								authenticating = {this.props.is_authenticating}
-								initAuthentication = {this.props.initAuthentication}
+							<FormSession							
+								successProvider = { this.responseProviderSucces }
+								succesFailure = { this.responseProviderFailure } 
+								visible_login = { this.props.visible_login }
+								visible_reset_password = { this.props.visible_reset_password }
+								resetPasswordOperation = { this.resetPasswordOperation }
+								resetPasswordUrls = {['http://127.0.0.1/accounts/reset', 'http://127.0.0.1/accounts/resetpassword']}
+								authenticating = { this.props.is_authenticating }
+								initAuthentication = { this.props.initAuthentication }
+								handleSessionSubmit = { this.handleSessionSubmit }
 								logo = {
 									<Icon
 										component = {logo}
@@ -147,6 +170,7 @@ class LoginPage extends Component{
 
 const mapStateToProps = state => {
 	return({
+		visible_reset_password : state.visible_reset_password,
 		visible_login : state.visible_login,
 		message_operation : state.message_operation,
 		is_authenticating : state.authentication.is_authenticating,
@@ -161,9 +185,10 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
 	converToken,
 	initRegistration,
+	setVisibleResetPassword,
 	setVisibleLogin,
-	setMessageOperation,
-	initAuthentication
+	initAuthentication,
+	setUserLog
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(LoginPage))
