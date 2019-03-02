@@ -35,7 +35,29 @@ const SET_STEP = 'SET_STEP'
 const SENT_EMAIL_RESET_PASSWORD = 'SENT_EMAIL_RESET_PASSWORD'
 const SENDING_EMAIL_RESET_PASSWORD = 'SENDING_EMAIL_RESET_PASSWORD'
 
-const setUserLog = payload => ({ type : SET_USER_LOG, payload })
+const setUser = payload => ({ type : SET_USER_LOG, payload })
+
+const setUserLog = data_user => async dispatch => {
+
+	const { email } = data_user
+	try {
+		const response = await fetch('http://127.0.0.1:8000/users/' + email)
+
+		if(!response.ok)
+			throw response
+
+		const data = await response.json()
+
+		data_user.super_user = data.is_superuser
+
+		console.log(data_user)
+		dispatch(setUser(data_user))
+
+	} catch (error) {
+		showMessage({ type : 'error', message : CODES_OPERATIONS.False.LOGIN_OPERATION })
+	}
+	
+}
 
 const sendingEmailResetPassword = payload => ({type : SENDING_EMAIL_RESET_PASSWORD, payload})
 
@@ -51,6 +73,18 @@ const setVisibleResetPassword = payload => ({type : SET_VISIBLE_RESET_PASSWORD, 
 
 const setVisibleLogin = payload => ({type : SET_VISIBLE_LOGIN, payload})
 
+const initSocialAuthentication = data_social => dispatch => {
+	
+	try {
+		dispatch(converToken(data_social.Zi.access_token))
+		dispatch(setUserLog(data_social.profileObj))
+	} catch (error) {
+		console.log("Error al autenticar socialmente")
+	}
+		
+
+		
+}
 
 const initAuthentication = data_user => async dispatch => {
 
@@ -76,12 +110,12 @@ const initAuthentication = data_user => async dispatch => {
 			throw response
 
 		let json = await response.json()
-		console.log(json)
+		
 
 
 		try {
 			let token_key = json['key']
-			console.log("mi token es:")
+			
 			console.log(token_key)
 			dispatch(setTokenConvertSuccess(token_key, null))
 			dispatch(setAuthenticated(true))
@@ -218,7 +252,7 @@ const setConvertTokenFailure = operation => dispatch => {
 }
 
 const setTokenConvertSuccess = (payload, operation) => dispatch  => {
-	console.log(payload)
+	
 	if(payload.key){
 		
 		let expiryDate = Math.round(new Date().getTime() / 1000) + payload.expires_in
@@ -243,7 +277,6 @@ const setTokenConvertSuccess = (payload, operation) => dispatch  => {
 
 const converToken = access_token => dispatch => {
 
-	console.log(access_token)
 	const searchParams = new URLSearchParams()
 	
 	searchParams.set("grant_type", "convert_token");
@@ -263,11 +296,11 @@ const converToken = access_token => dispatch => {
         body: searchParams})
 	    	.then( json => json.json())
 	    	.then( data => {
-				console.log("el token de autenticacion en el server es:")
-				console.log(data)
+				
 	    		dispatch(setTokenConvertSuccess(data))
 	    		dispatch(setAuthenticating(false))
-	    		dispatch(setAuthenticated(true))})
+				dispatch(setAuthenticated(true))})
+	
 	    	.catch( err => {
 				dispatch(setConvertTokenFailure({ type : 'error', message : CODES_OPERATIONS.False.LOGIN_OPERATION}))
 	    	})
@@ -293,6 +326,7 @@ export {
 	setUserLog,
 	setStep,
 	initRegistration,
+	initSocialAuthentication,
 	initAuthentication,
 	sendingEmailResetPassword,
 	sendUuidResetPassword,

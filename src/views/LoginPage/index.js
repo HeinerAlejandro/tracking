@@ -5,12 +5,11 @@ import FormSession from './../../components/FormSession'
 import { CODES_OPERATIONS } from './../../constants/withTokens'
 import { withRouter } from 'react-router'
 import {
-		converToken,
 		initRegistration,
+		initSocialAuthentication,
 		initAuthentication,
 		setVisibleResetPassword,
 		setVisibleLogin,
-		setUserLog
 	} from './../../actions/LoginRegisterAction'
 
 import { Row, Col, Icon, message } from 'antd'
@@ -33,14 +32,7 @@ class LoginPage extends Component{
 
 	responseProviderSucces(response){
 	
-		const { converToken, setUserLog } = this.props
-
-		converToken(response.Zi.access_token)
-
-		setUserLog(response.profileObj)
-
-		this.props.history.push('account/dashboard')
-
+		this.props.initSocialAuthentication(response)
 	}
 
 	responseProviderFailure(response){
@@ -55,7 +47,7 @@ class LoginPage extends Component{
 
 		const data_user = {
 			name : elements_form.name,
-			correo : elements_form.email,
+			email : elements_form.email,
 			password : elements_form.password
 		}
 		
@@ -183,12 +175,11 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = {
-	converToken,
 	initRegistration,
 	setVisibleResetPassword,
 	setVisibleLogin,
-	initAuthentication,
-	setUserLog
+	initSocialAuthentication,
+	initAuthentication
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(LoginPage))
