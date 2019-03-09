@@ -14,7 +14,7 @@ import {
 
 import { Row, Col, Icon, message } from 'antd'
 import './styles.css'
-
+import { RouteDashboard } from '../../Routes/AccountRouter'
 import  { ReactComponent as logo }  from './../../resources/location.svg'
 import { showMessage } from '../../services';
 
@@ -30,9 +30,14 @@ class LoginPage extends Component{
 		this.handleSessionSubmit = this.handleSessionSubmit.bind(this)
 	}
 
-	responseProviderSucces(response){
+	async responseProviderSucces(response){
 	
-		this.props.initSocialAuthentication(response)
+		let status = await this.props.initSocialAuthentication(response)
+
+		if(status)
+			this.props.history.push(RouteDashboard)
+		else
+			message.error("Error al autenticar")
 	}
 
 	responseProviderFailure(response){
@@ -51,13 +56,11 @@ class LoginPage extends Component{
 			password : elements_form.password
 		}
 		
-		this.props.initRegistration(data_user)		
+		this.props.initRegistration(data_user, this.props.history.location.push)		
 	}
 
-	handleSessionSubmit(){
-		
-		if(this.props.is_authenticated)
-			this.props.history.push('/account/')
+	async handleSessionSubmit(data_user){
+		this.props.initAuthentication(data_user)
 	}
 
 	handleOperation(){

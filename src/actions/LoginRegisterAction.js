@@ -1,5 +1,5 @@
 import URLSearchParams from "url-search-params";
-import history from './../history'
+
 import { message } from 'antd'
 import {URL_SERVER, 
 		CLIENT_ID_DJANGO,
@@ -10,6 +10,9 @@ import {URL_SERVER,
 import {
 	readObjectResponseOperation,
 	showMessage } from './../services'
+
+
+import { RouteDashboard } from '../Routes/AccountRouter'
 
 const SET_USER_LOG = 'SET_USER_LOG'
 
@@ -37,24 +40,37 @@ const SENDING_EMAIL_RESET_PASSWORD = 'SENDING_EMAIL_RESET_PASSWORD'
 
 const setUser = payload => ({ type : SET_USER_LOG, payload })
 
-const setUserLog = data_user => async dispatch => {
+const setUserLog = async (data_user, social = false) => {
 
 	const { email } = data_user
+
 	try {
-		const response = await fetch('http://127.0.0.1:8000/users/' + email)
+
+		let token = localStorage.getItem('token')
+
+		let data_request = {
+			method : 'GET',
+			headers : {
+				Accept : 'application/json',
+				Authorization : `Bearer ${BACKENDS_PROVIDER.GOOGLE} ${token}`
+			}
+		}
+
+		const response = await fetch('http://127.0.0.1:8000/users/' + email, data_request)
+
+		console.log("respuesta en user")
 
 		if(!response.ok)
-			throw response
+			throw CODES_OPERATIONS.True.LOGIN_OPERATION
 
 		const data = await response.json()
 
 		data_user.super_user = data.is_superuser
-
-		console.log(data_user)
-		dispatch(setUser(data_user))
+		console.log("respuesta exitosa")
+		return data_user
 
 	} catch (error) {
-		showMessage({ type : 'error', message : CODES_OPERATIONS.False.LOGIN_OPERATION })
+		throw error
 	}
 	
 }
@@ -73,20 +89,41 @@ const setVisibleResetPassword = payload => ({type : SET_VISIBLE_RESET_PASSWORD, 
 
 const setVisibleLogin = payload => ({type : SET_VISIBLE_LOGIN, payload})
 
-const initSocialAuthentication = data_social => dispatch => {
-	
-	try {
-		dispatch(converToken(data_social.Zi.access_token))
-		dispatch(setUserLog(data_social.profileObj))
-	} catch (error) {
-		console.log("Error al autenticar socialmente")
-	}
-		
 
-		
+const getObjectLocation = (pathname, search = null, query = null, state = {}) => ({
+	pathname,
+	search,
+	query,
+	state
+})
+
+const initSocialAuthentication = data_social => async dispatch => {
+
+	dispatch(setAuthenticating(true))
+
+	try {
+		 
+		let data = await converToken(data_social.Zi.access_token)
+		console.log(data)
+		setTokenConvertSuccess(data)
+		localStorage.setItem("token", data_social.Zi.access_token)
+		console.log("despues de success")
+		dispatch(setAuthenticating(false))
+		dispatch(setAuthenticated(true))
+		console.log("antes de setUserLog")
+		let data_user_complete = await setUserLog(data_social.profileObj, true)
+		console.log("despues de setUserLog")
+		console.log(data_user_complete)
+		dispatch(setUser(data_user_complete))
+
+		return true
+
+	} catch (error) {
+		return false
+	}	
 }
 
-const initAuthentication = data_user => async dispatch => {
+const initAuthentication = (data_user, push) => async dispatch => {
 
 	let headers = new Headers()
 
@@ -111,23 +148,23 @@ const initAuthentication = data_user => async dispatch => {
 
 		let json = await response.json()
 		
-
-
 		try {
 			let token_key = json['key']
 			
 			console.log(token_key)
-			dispatch(setTokenConvertSuccess(token_key, null))
+
+			setTokenConvertSuccess(token_key, null)
 			dispatch(setAuthenticated(true))
-			//history.push('/account/')
+
+			let location = getObjectLocation(RouteDashboard)
+
+			dispatch(push(location))
 
 		} catch (error) {
 			console.log("error al obtener llave")
 			throw json
 		}
-		
-
-		
+	
 	} catch (error) {
 		console.log("en catch externo")
 		let json = await error.json()
@@ -153,7 +190,7 @@ const sendUuidResetPassword = data => async dispatch => {
 		
 
 		if(!response.ok)
-			throw(response)
+			throw response
 
 		const json = await response.json()
 								
@@ -184,7 +221,7 @@ const sendEmailResetPassword = email => async dispatch => {
 		
 
 		if(!response.ok)
-			throw(response)
+			throw response
 
 		const json = await response.json()
 								
@@ -251,32 +288,33 @@ const setConvertTokenFailure = operation => dispatch => {
 	operation && showMessage(operation)
 }
 
-const setTokenConvertSuccess = (payload, operation) => dispatch  => {
-	
-	if(payload.key){
-		
+const setTokenConvertSuccess = (payload, operation) => {
+
+
+	const keys = Object.keys(payload)
+
+	if(keys.length > 1){
+		console.log("en object token")
 		let expiryDate = Math.round(new Date().getTime() / 1000) + payload.expires_in
 
 		localStorage.setItem("access_token_converted", payload.access_token)
 		localStorage.setItem("refresh_token_converted", payload.refresh_token)
 		localStorage.setItem("access_token_expires_in", expiryDate)
 		
-	}else
+	}else{
+		console.log("en token")
 		localStorage.setItem("access_token_converted", payload)
 		
-
-	dispatch(setAuthenticated(true))
+	}	
 	
 	operation && showMessage(operation)
-	
-	return {
-    	type: SUCCESS_TOKEN_CONVERT,
-    	payload
-  	}
+
+	console.log("al final de la funcionn de conver token success")
 }
 
-const converToken = access_token => dispatch => {
-
+const converToken = async access_token  => {
+	console.log("convirtiendo token")
+	console.log(access_token)
 	const searchParams = new URLSearchParams()
 	
 	searchParams.set("grant_type", "convert_token");
@@ -285,26 +323,34 @@ const converToken = access_token => dispatch => {
     searchParams.set("backend", BACKENDS_PROVIDER.GOOGLE);
     searchParams.set("token", access_token);
 
-	dispatch(setAuthenticating(true))
 	
-    fetch("http://127.0.0.1:8000/auth/convert-token",{
+	let headers = {
     	method: "POST",
        	headers: {
         	Accept: "application/json",
         	"Content-Type": "application/x-www-form-urlencoded"
        	},
-        body: searchParams})
-	    	.then( json => json.json())
-	    	.then( data => {
-				
-	    		dispatch(setTokenConvertSuccess(data))
-	    		dispatch(setAuthenticating(false))
-				dispatch(setAuthenticated(true))})
+		body: searchParams
+	}
+
+	try{
+		const response = await fetch("http://127.0.0.1:8000/auth/convert-token", headers)
+		
+
+		if(!response.ok){
+			console.log(await response.json())
+			throw CODES_OPERATIONS.True.LOGIN_OPERATION
+		}
+
+		let data = await response.json()
+		
+		console.log("exitoso conversion")
+		return data
 	
-	    	.catch( err => {
-				dispatch(setConvertTokenFailure({ type : 'error', message : CODES_OPERATIONS.False.LOGIN_OPERATION}))
-	    	})
-			      
+	}catch(error) {
+		console.log("en errode conver token")
+		throw error
+	}	      
 }
 
 

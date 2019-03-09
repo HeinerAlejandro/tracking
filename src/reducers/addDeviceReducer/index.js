@@ -6,7 +6,7 @@ import {
 const addDeviceReducer = (state = {}, action) => {
     switch(action.type){
         case ADD_DEVICE:
-            return { ...state, [action.payload.code]: { ...action.payload.device }}
+            return { ...state, [action.payload.serial]: { ...action.payload.device }}
         default:
             return state
     }

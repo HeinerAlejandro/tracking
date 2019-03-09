@@ -8,14 +8,6 @@ import { Row, Col } from 'antd'
 
 import  { DEVICES } from './../../constants/withPanel'
 
-const columns = [
-  'Codigo',
-  'Tipo',
-  'Fecha de registro',
-  'Estado',
-  ''
-]
-
 class DeviceSection extends Component {
 
   constructor(props){
@@ -25,7 +17,26 @@ class DeviceSection extends Component {
     this.getButtonsOperations = this.getButtonsOperations.bind(this)
     this.getCardTable = this.getCardTable.bind(this)
     this.handleClickRegister = this.handleClickRegister.bind(this)
+    this.getColums = this.getColums.bind(this)
   }
+
+  getColums = () => (
+    this.props.role
+      ? [
+        'Codigo',
+        'Tipo',
+        'Fecha de registro',
+        'Estado',
+        ''
+      ]
+
+      : [
+        'Codigo',
+        'Tipo',
+        'Fecha de registro',
+        ''
+      ]
+  )
 
   handleClickRegister = () => (
     this.props.visible_form 
@@ -69,7 +80,7 @@ class DeviceSection extends Component {
         <CardBody>   
             <SearchComponent handleFilter = { this.props.handleChangeSearch } />        
           <DeviceList
-            columns_header = { columns }
+            columns_header = { this.getColums() }
             devices = { devices }
             type = 'table'
             selectDevice = { this.props.selectDevice }

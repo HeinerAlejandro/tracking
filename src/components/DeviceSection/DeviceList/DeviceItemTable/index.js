@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import { Button, Select } from 'antd'
+import authorizationHook from '../../../../hooks/authorizationHook'
+import { Item } from './Item'
 
 const Option = Select.Option
 
@@ -44,13 +46,8 @@ class DeviceItemTable extends Component {
 
     const { data, name } = this.props 
 
-    return(
-      <>
-        <td>{ name }</td>
-        <td>{ data.type }</td>
-        <td>{ data.date }</td>
-
-        <td>
+    const selectOperation = (status) => (
+      <td>
           <Select
             style = {{ width : 120 }}
             defaultValue = {data.status}
@@ -68,6 +65,34 @@ class DeviceItemTable extends Component {
               </Option>
           </Select>
         </td>
+    )
+
+    const SelectOp = authorizationHook(Item)
+
+    return(
+
+      <>
+        <Item
+          type = 'simple' 
+          values = { name }  
+        />
+        <Item
+          type = 'simple' 
+          values = { data.type }  
+        />
+        <Item
+          type = 'simple' 
+          values = { data.date }  
+        />
+
+        <SelectOp 
+          type = 'select'
+          forDefault = {data.status}
+          optionStyle = {{ width : '100px' }}
+          values = { ['ACTIVE', 'INACTIVE'] }
+        />
+        
+
         <td>
           <Button 
             disabled = { data.status === 'ACTIVE' ? false : true}

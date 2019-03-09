@@ -3,6 +3,9 @@ import React from 'react'
 import UserInterfazView from './../views/UserInterfacePage'
 import history from './../history'
 
+
+export const RouteDashboard = 'account/dashboard'
+
 const isLogged = () => {
   const access_token = localStorage.getItem('access_token_converted')
   return (!!access_token)

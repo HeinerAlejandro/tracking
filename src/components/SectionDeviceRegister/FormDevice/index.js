@@ -17,18 +17,23 @@ const type_in_serial = (
     </Tooltip>
 )
 
-const FormDevice = (props) => (
-    <Form className = 'register-device'>
+const FormDevice = ({ onHandleSubmit }) => (
+    <Form className = 'register-device'
+        onSubmit = { onHandleSubmit }
+        
+    >
         <Item>
             <Input
                 addonBefore = { type_in_serial }
-                type = 'text'
+                type = 'number'
+                max = { 3 }
                 placeholder = 'Serial'
             />
         </Item>
 
         <Item>
-            <Button htmlType = 'button'>
+            <Button
+                htmlType = 'submit' >
                 Registrar
             </Button>
         </Item>

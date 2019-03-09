@@ -6,22 +6,17 @@ import {
     setFilterSearchDevice,
     setVisibleForm,
     setDevices,
-    selectDevice
+    selectDevice,
+    getDevicesFromServer
 } from './../../actions/DeviceActions'
 
 import toPairs from 'lodash.topairs'
 
 class SectionDevicesView extends Component {
 
-    getDevicesFromserver = () => {
-        //Realizar Fetch al server
-    }
-
     componentDidMount = () => {
-        //getDevicesFromserver()
-
-        this.props.setDevices(DEVICES)
-
+        if(!this.props.devices)
+            this.props.getDevicesFromServer()
     } 
 
     constructor(props){
@@ -58,6 +53,7 @@ class SectionDevicesView extends Component {
 
         return (
             <DeviceSection
+                role = { this.props.role }
                 devices = { devices }
                 handleChangeSearch = { this.handleChangeSearch }   
                 visible_form = { this.props.visible_form }
@@ -70,6 +66,7 @@ class SectionDevicesView extends Component {
 }
 
 const mapStateToProps = state => ({
+    role : state.data_user.role,
     devices : state.devices,
     filter_search : state.filter_search,
     visible_form : state.visible_form_device,
@@ -79,7 +76,8 @@ const mapDispatchToProps = {
     setFilterSearchDevice,
     setVisibleForm,
     setDevices,
-    selectDevice
+    selectDevice,
+    getDevicesFromServer
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SectionDevicesView)

@@ -17,12 +17,12 @@ const MapDevices = ({ positions }) => {
     }else
         position = positions
 
-    const coordenate = [position.lat, position.lon]
+    const coordenate = positions && [position.lat, position.lon]
     
     return(
         <Map
             className = 'map element-operation'
-            center = { coordenate }
+            center = { coordenate || [51.0009, -0.0009] }
             zoom = { 13 }>
 
             <TileLayer

@@ -19,9 +19,9 @@ const addDevice = payload => (
 const setDevices = devices => dispatch => {
 
     devices.forEach((device, index) => {
-        let code = device.code
-        delete device.code
-        dispatch(addDevice({code, device}))
+        let serial = device.serial
+        delete device.serial
+        dispatch(addDevice({serial, device}))
     });
 
 }
@@ -54,33 +54,82 @@ const setVisibleForm = payload => (
     }
 )
 
-const fetchCreateDevice = (device) => async dispatch => {
+const fetchCreateDevice = device => async dispatch => {
 
     const body = new FormData()
 
+
     body.append('device', device)
+
+    let headers = new Headers()
+
+    let token = localStorage.getItem('token')
+
+    headers.append('Content-Type', 'application/json')
+    headers.append('Accept', 'application/json')
+    headers.append('Authorization', token)
 
     const options = {
         method : 'post',
         mode : 'cors',
+        headers : headers,
         body
     }
 
     try{
+        
         const response = await fetch(URL_DEVICES, options)
 
         if(!response.ok)
-            throw(response)
+            throw response
     
         const json = await response.json()
         
         message.success(json.detail)
 
-       // dispatch(addDevice({code, device}))
+       let { type, serial } = { json }
+
+       dispatch(addDevice({type, serial}))
 
     }catch(err){
-        console.log(await err.json())
+
+        let json = await err.json()
+
+        message.error(json.detail)
     }
+}
+
+const getDevicesFromServer = () => async dispatch => {
+
+    try {
+
+        let headers = new Headers()
+
+        let token = localStorage.getItem('token')
+
+        headers.append('Content-Type', 'application/json')
+        headers.append('Accept', 'application/json')
+        headers.append('Authorization', token)
+
+        let data_request = {
+            method : 'GET',
+            mode : 'cors',
+            headers : headers
+        }
+
+        const response = await fetch(URL_DEVICES)
+
+        if(!response.ok)
+            throw response
+
+        const devices = await response.json()
+
+        dispatch(setDevices(devices))
+
+    }catch(err){
+        message.error("Error al obtener los dispositivos")
+    }
+
 }
 
 export {
@@ -94,5 +143,7 @@ export {
     setDevice,
     selectDevice,
     setFilterSearchDevice,
-    setVisibleForm
+    setVisibleForm,
+    fetchCreateDevice,
+    getDevicesFromServer
 }

@@ -2,30 +2,31 @@
 import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
 
 export const DEVICES = [{
-  code : 'G123',
+  serial : 'G123',
   type : 'G',
   date: '2012/02/01',
   status : 'ACTIVE'
 },
 {
-  code : 'M112',
+  serial : 'M112',
   type : 'M',
   date: '2012/03/01',
   status : 'ACTIVE'
 },
 {
-  code : 'S111',
+  serial : 'S111',
   type : 'S',
   date: '2013/02/01',
   status : 'ACTIVE'
 },{
-  code : 'S112',
+  serial : 'S112',
   type : 'S',
   date: '2013/02/01',
   status : 'ACTIVE'
 }]
 
 export const URL_DEVICES = 'http://127.0.0.1:8000/devices'
+export const URL_LINK_SHOP = 'http://127.0.0.1:8000/link_shop'
 
 export const options = {
     tooltips: {

@@ -26,7 +26,7 @@ export default class SectionDeviceRegister extends Component {
         <h3>Registra un dispositivo</h3>
         <Row align = 'center'>
           <Col span = { 20 }>
-            <FormDevice />
+            <FormDevice onHandleSubmit = { this.props.onSubmitDevice }/>
           </Col>
         </Row>
       </Modal>
