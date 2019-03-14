@@ -1,7 +1,12 @@
-import React, { Component, Suspense } from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
-import { Container } from 'reactstrap';
+import React, { Component, Suspense } from 'react'
+import { withRouter } from 'react-router'
+import { Redirect, Switch, Route } from 'react-router-dom'
+import { Container } from 'reactstrap'
 import { Icon } from 'antd'
+import {
+  CLIENT_ID_DJANGO,
+  CLIENT_SECRET_DJANGO
+} from '../../constants/withTokens'
 
 import {
   AppAside,
@@ -14,11 +19,14 @@ import {
   AppSidebarHeader,
   AppSidebarMinimizer,
   AppSidebarNav,
-} from '@coreui/react';
+} from '@coreui/react'
 // sidebar nav config
-import navigation from '../../_nav';
+import navigation from '../../_nav'
 // routes config
-import routes from '../../Routes/PanelRouters';
+import routes from '../../Routes/PanelRouters'
+
+import { isLogged } from '../../Routes/AccountRouter'
+
 
 const DefaultAside = React.lazy(() => import('./DefaultAside'));
 const DefaultFooter = React.lazy(() => import('./DefaultFooter'));
@@ -26,14 +34,48 @@ const DefaultHeader = React.lazy(() => import('./DefaultHeader'));
 
 class DefaultLayout extends Component {
 
+  constructor(props){
+    super(props)
+
+    this.signOut = this.signOut.bind(this)
+  }
+
   loading = () => <Icon type =  'loading'/>
 
   signOut(e) {
     e.preventDefault()
-    this.props.history.push('/login')
+    
+    const token = localStorage.getItem('token')
+    const type = localStorage.getItem('type')
+
+    localStorage.removeItem('backend')
+    localStorage.removeItem('type')
+
+    if(type === 'Bearer'){
+      const backend = localStorage.getItem('backend')
+
+      localStorage.removeItem('backend')
+
+      fetch('http://localhost:8000/auth/revoke-token',{
+        body: {
+          client_id : CLIENT_ID_DJANGO,
+          client_secret: CLIENT_SECRET_DJANGO,
+          token: token,
+        }
+      })
+    }else{
+
+    }
+    
+    this.props.setUser({})
+    this.props.removeAllDevice()
+    this.props.history.push('/')
   }
 
   render() {
+
+    var logged = isLogged()
+
     return (
       <div className="app">
         <AppHeader fixed>
@@ -52,16 +94,21 @@ class DefaultLayout extends Component {
               <Suspense fallback={this.loading()}>
                 <Switch>
                   {routes.map((route, idx) => {
+                    
                     return route.component ? (
                       <Route
                         key={idx}
-                        path={route.path}
+                        path={route.path}    
                         exact={route.exact}
                         name={route.name}
                         render = {props => (
-                            <route.component { ...props } />
+                            isLogged()     
+                              ? <route.component { ...props } />
+                              : <Redirect to = '/' />
                           )
-                        } />
+                        } 
+                        
+                      />
                     ) : (null);
                   })}
                   <Redirect from="/account" to="/account/dashboard" />
@@ -80,4 +127,4 @@ class DefaultLayout extends Component {
   }
 }
 
-export default DefaultLayout;
+export default withRouter(DefaultLayout)

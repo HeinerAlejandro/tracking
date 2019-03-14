@@ -13,10 +13,10 @@ class FormSession extends React.Component {
 	  e.preventDefault()
 	  this.props.form.validateFieldsAndScroll((err, values) => {
 			if (!err) {
-				const data_user = JSON.stringify({
+				const data_user = {
 					email : this.props.form.getFieldValue('emailogin'),
 					password : this.props.form.getFieldValue('passwordlogin'),
-				})
+				}
 
 				this.props.handleSessionSubmit(data_user)
 			}

@@ -1,35 +1,29 @@
 import { Route, Redirect } from 'react-router-dom'
 import React from 'react'
 import UserInterfazView from './../views/UserInterfacePage'
-import history from './../history'
+import { withRouter } from 'react-router'
 
 
-export const RouteDashboard = 'account/dashboard'
+const RouteDashboard = 'account/dashboard'
 
 const isLogged = () => {
-  const access_token = localStorage.getItem('access_token_converted')
+  let access_token = localStorage.getItem('token')
   return (!!access_token)
 }
 
-const isIndexPath = () => (history.location.pathname === '/' ? true : false)
-
-const confirmAccesToAccount = () => {
-  
-  if(isLogged())
-    return true
-
-  return false
-}
-
-const AccountRouter = (...rest) => (
-  <Route 
-    {...rest}
-    render = { props => {
-        return confirmAccesToAccount() 
-        ? (<UserInterfazView { ...props }/>)
-        : (<Redirect to = {{ pathname : '/' }}/>)
-    }}
+const privateRouter = ({ history }) => ( 
+  <Route render = { (props) => (
+    !isLogged()
+    ? <Redirect to = ''/>
+    : <UserInterfazView />
+  )}
   />
 )
 
-export { AccountRouter }
+const AccountRouter = withRouter(privateRouter)
+
+export { 
+  AccountRouter,
+  isLogged,
+  RouteDashboard
+}

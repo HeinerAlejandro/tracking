@@ -56,11 +56,18 @@ class LoginPage extends Component{
 			password : elements_form.password
 		}
 		
-		this.props.initRegistration(data_user, this.props.history.location.push)		
+		this.props.initRegistration(data_user)		
 	}
 
 	async handleSessionSubmit(data_user){
-		this.props.initAuthentication(data_user)
+
+		let status = await this.props.initAuthentication(data_user)
+
+		if(status)
+			this.props.history.push(RouteDashboard)
+		else
+			message.error("Error al autenticar")
+
 	}
 
 	handleOperation(){

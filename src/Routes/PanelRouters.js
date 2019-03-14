@@ -1,8 +1,8 @@
 import React from 'react';
-import DefaultLayout from './../components/UserInterface';
+import DefaultLayout from './../views/UserInterfacePage';
 
 const Dashboard = React.lazy(() => import('./../components/Dashboard'));
-const Settings = React.lazy(() => import('./../components/Settings'));
+const Settings = React.lazy(() => import('./../views/UserInterfacePage/SettignsView'));
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [

@@ -13,7 +13,9 @@ class FormDeviceView extends React.Component{
     
     e.preventDefault()
     
-    this.props.fetchCreateDevice()
+    let device = document.getElementsByName('input-create-device')[0].value
+    console.log("contenido de input : " + device)
+    this.props.fetchCreateDevice(device)
 
   }
 

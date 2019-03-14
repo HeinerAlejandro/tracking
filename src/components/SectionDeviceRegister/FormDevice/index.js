@@ -24,9 +24,9 @@ const FormDevice = ({ onHandleSubmit }) => (
     >
         <Item>
             <Input
-                addonBefore = { type_in_serial }
-                type = 'number'
-                max = { 3 }
+                name = 'input-create-device'
+                type = 'text'
+                maxLength = { 4 }
                 placeholder = 'Serial'
             />
         </Item>

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { Icon } from 'antd'
 
 const authorizationHook = WrapComponent => {
     class authorizationComponent extends Component{
@@ -8,7 +9,7 @@ const authorizationHook = WrapComponent => {
             const authorized = this.props.isSuperuser
             
             return(
-                authorized && <WrapComponent {...this.props} />
+                authorized && <WrapComponent {...this.props} /> || <Icon type = 'loading' />
             )
         }
     }

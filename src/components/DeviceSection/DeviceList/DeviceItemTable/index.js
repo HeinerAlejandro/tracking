@@ -50,7 +50,7 @@ class DeviceItemTable extends Component {
       <td>
           <Select
             style = {{ width : 120 }}
-            defaultValue = {data.status}
+            defaultValue = {data.status === 'H'?"ACTIVE":"INACTIVE"}
             name="status"       
             id="status">
 
@@ -78,24 +78,24 @@ class DeviceItemTable extends Component {
         />
         <Item
           type = 'simple' 
-          values = { data.type }  
+          values = { data.typee }  
         />
         <Item
           type = 'simple' 
-          values = { data.date }  
+          values = { data.date_register }  
         />
 
         <SelectOp 
           type = 'select'
           forDefault = {data.status}
           optionStyle = {{ width : '100px' }}
-          values = { ['ACTIVE', 'INACTIVE'] }
+          values = { ['ACTIVO', 'INACTIVO'] }
         />
         
 
         <td>
           <Button 
-            disabled = { data.status === 'ACTIVE' ? false : true}
+            disabled = { data.status === 'ACTIVO' ? false : true}
             onClick = { this.handleClick }
             style = {{ background : 'none', border: 'none'}}
             icon = 'eye' />

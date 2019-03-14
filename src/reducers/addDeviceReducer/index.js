@@ -1,12 +1,14 @@
 import { 
-    ADD_DEVICE
+    ADD_DEVICE,
+    REMOVE_ALL_DEVICES
 } from './../../actions/DeviceActions'
 
-//convertir array de dicts a un dicts de dicts
 const addDeviceReducer = (state = {}, action) => {
     switch(action.type){
         case ADD_DEVICE:
-            return { ...state, [action.payload.serial]: { ...action.payload.device }}
+            return { ...state, [action.payload.serial]: { ...action.payload.device, status:action.payload.device ==='H'?'ACTIVO':'INACTIVO' }}
+        case REMOVE_ALL_DEVICES:
+                return {}
         default:
             return state
     }

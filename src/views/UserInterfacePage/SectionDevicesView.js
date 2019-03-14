@@ -15,7 +15,7 @@ import toPairs from 'lodash.topairs'
 class SectionDevicesView extends Component {
 
     componentDidMount = () => {
-        if(!this.props.devices)
+        if(!this.props.device)
             this.props.getDevicesFromServer()
     } 
 
@@ -29,7 +29,7 @@ class SectionDevicesView extends Component {
 
     handleChangeSearch = ({ target }) => {
         let { value } = target
-        console.log(value)
+    
         this.props.setFilterSearchDevice(value)
     }
 

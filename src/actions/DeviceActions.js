@@ -1,13 +1,18 @@
 import { URL_DEVICES } from './../constants/withPanel'
 import { message } from 'antd'
+import { toPairs } from 'lodash.topairs'
+import { async } from 'q';
 
 const ADD_DEVICE = 'ADD_DEVICE'
+const REMOVE_ALL_DEVICES = 'REMOVE_ALL_DEVICES'
 const SELECT_DEVICE = 'SELECT_DEVICE'
 const SET_DEVICES = 'SET_DEVICES'
 
 const SET_FILTER_SEARCH_DEVICE = 'SET_FILTER_SEARCH_DEVICE'
 
 const SET_VISIBLE_FORM = 'SET_VISIBLE_FORM'
+
+const ADD_POSITION_DEVICE = 'ADD_POSITION_DEVICE'
 
 const addDevice = payload => (
     {
@@ -16,9 +21,15 @@ const addDevice = payload => (
     }
 )
 
+const removeAllDevice = () => (
+    {
+        type :REMOVE_ALL_DEVICES
+    }
+)
+
 const setDevices = devices => dispatch => {
 
-    devices.forEach((device, index) => {
+    devices.forEach((device) => {
         let serial = device.serial
         delete device.serial
         dispatch(addDevice({serial, device}))
@@ -40,6 +51,11 @@ const selectDevice = payload => (
     }
 )
 
+const addPosition = payload => ({
+    type: ADD_POSITION_DEVICE,
+    payload
+})
+
 const setFilterSearchDevice = payload => (
     {
         type : SET_FILTER_SEARCH_DEVICE,
@@ -56,18 +72,19 @@ const setVisibleForm = payload => (
 
 const fetchCreateDevice = device => async dispatch => {
 
-    const body = new FormData()
+    let body = new FormData()
 
+    body.append('serial', device)
 
-    body.append('device', device)
+    let headers = new Headers() 
 
-    let headers = new Headers()
+    headers.append('Accept', 'application/json')
 
     let token = localStorage.getItem('token')
+    let type = localStorage.getItem('type')
+    let backend = localStorage.getItem('backend') === null?'':localStorage.getItem('backend')
 
-    headers.append('Content-Type', 'application/json')
-    headers.append('Accept', 'application/json')
-    headers.append('Authorization', token)
+    headers.append('Authorization', `${type} ${backend} ${token}`)
 
     const options = {
         method : 'post',
@@ -82,20 +99,23 @@ const fetchCreateDevice = device => async dispatch => {
 
         if(!response.ok)
             throw response
-    
+        
+       
         const json = await response.json()
         
-        message.success(json.detail)
+        message.success("dispositivo registrado")
 
-       let { type, serial } = { json }
+       let { serial } =  json 
 
-       dispatch(addDevice({type, serial}))
+       delete json.serial
+
+       let device = toPairs(json)
+
+       dispatch(addDevice({serial:serial, device:device[1]}))
 
     }catch(err){
 
-        let json = await err.json()
-
-        message.error(json.detail)
+        message.error("No se pudo registrar el dispotivo")
     }
 }
 
@@ -105,11 +125,13 @@ const getDevicesFromServer = () => async dispatch => {
 
         let headers = new Headers()
 
-        let token = localStorage.getItem('token')
-
-        headers.append('Content-Type', 'application/json')
         headers.append('Accept', 'application/json')
-        headers.append('Authorization', token)
+
+        let token = localStorage.getItem('token')
+        let type = localStorage.getItem('type')
+        let backend = localStorage.getItem('backend') === null?'':localStorage.getItem('backend')
+    
+        headers.append('Authorization', `${type} ${backend} ${token}`)
 
         let data_request = {
             method : 'GET',
@@ -117,7 +139,7 @@ const getDevicesFromServer = () => async dispatch => {
             headers : headers
         }
 
-        const response = await fetch(URL_DEVICES)
+        const response = await fetch(URL_DEVICES, data_request)
 
         if(!response.ok)
             throw response
@@ -129,21 +151,112 @@ const getDevicesFromServer = () => async dispatch => {
     }catch(err){
         message.error("Error al obtener los dispositivos")
     }
-
 }
+
+const setPositions = positions => dispatch => {
+
+    const device = positions[0].device
+
+    positions.forEach(position => {
+
+        delete position.device
+
+        dispatch(addDevice({
+            device,
+            position
+        }))
+    })
+}
+
+const getLastPosition = device => async dispatch => {
+    let body = new FormData()
+
+    body.append('device', device)
+
+    let headers = new Headers()
+
+    let token = localStorage.getItem('token')
+    let type = localStorage.getItem('type')
+    let backend = localStorage.getItem('backend') === null?'':localStorage.getItem('backend')
+
+    headers.append('Content-Type', 'application/json')
+    headers.append('Authorization', `${type} ${backend} ${token}`)
+
+    try{
+        const response = await fetch(`${URL_DEVICES}?last=True`, {
+            method: 'GET',
+            headers: headers,
+            body: body
+        })
+
+        const data = await response.json()
+
+        if(!response.ok)
+            throw data
+
+        dispatch(addPosition({
+            device,
+            position: data.position
+        }))
+
+    }catch(error){
+        throw error.detail
+    }
+}
+
+const getIntervalPosition = (interval) => async dispatch => {
+
+    let body = new FormData()
+
+    body.append('init', interval.init)
+    body.append('final', interval.final)
+
+    let headers = new Headers()
+
+    let token = localStorage.getItem('token')
+    let type = localStorage.getItem('type')
+    let backend = localStorage.getItem('backend') === null?'':localStorage.getItem('backend')
+
+    headers.append('Content-Type', 'application/json')
+    headers.append('Authorization', `${type} ${backend} ${token}`)
+
+    try{
+        const response = await fetch(`${URL_DEVICES}/${interval.device}/positions?init=${interval.init}&final=${interval.final}`, {
+            method: 'GET',
+            headers: headers,
+            body: body
+        })
+
+        const data = await response.json()
+
+        if(!response.ok)
+            throw data
+
+        dispatch(setPositions(data))
+
+    }catch(error){
+        throw error.detail
+    }
+}
+
 
 export {
     ADD_DEVICE,
+    REMOVE_ALL_DEVICES,
     SET_DEVICES,
     SELECT_DEVICE,
     SET_FILTER_SEARCH_DEVICE,
     SET_VISIBLE_FORM,
+    ADD_POSITION_DEVICE,
     addDevice,
+    removeAllDevice,
     setDevices,
     setDevice,
     selectDevice,
     setFilterSearchDevice,
     setVisibleForm,
     fetchCreateDevice,
-    getDevicesFromServer
+    getDevicesFromServer,
+    getLastPosition,
+    getIntervalPosition
 }

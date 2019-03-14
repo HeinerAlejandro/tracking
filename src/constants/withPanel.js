@@ -25,8 +25,8 @@ export const DEVICES = [{
   status : 'ACTIVE'
 }]
 
-export const URL_DEVICES = 'http://127.0.0.1:8000/devices'
-export const URL_LINK_SHOP = 'http://127.0.0.1:8000/link_shop'
+export const URL_DEVICES = 'http://127.0.0.1:8000/devices/'
+export const URL_LINK_SHOP = 'http://localhost:8000/link_shop'
 
 export const options = {
     tooltips: {

@@ -40,36 +40,43 @@ const SENDING_EMAIL_RESET_PASSWORD = 'SENDING_EMAIL_RESET_PASSWORD'
 
 const setUser = payload => ({ type : SET_USER_LOG, payload })
 
-const setUserLog = async (data_user, social = false) => {
-
-	const { email } = data_user
-
+const setUserLog = async (data_user = null, social = false) => {
+	console.log("en set userlog")
+	console.log(data_user)
 	try {
 
 		let token = localStorage.getItem('token')
-
+		let type = localStorage.getItem('type')
+		let backend = localStorage.getItem('backend') === null?'':localStorage.getItem('backend')
+	
 		let data_request = {
 			method : 'GET',
 			headers : {
 				Accept : 'application/json',
-				Authorization : `Bearer ${BACKENDS_PROVIDER.GOOGLE} ${token}`
+				Authorization : `${type} ${backend} ${token}`
 			}
 		}
 
-		const response = await fetch('http://127.0.0.1:8000/users/' + email, data_request)
-
-		console.log("respuesta en user")
+		const response = await fetch('http://127.0.0.1:8000/user/', data_request)
 
 		if(!response.ok)
 			throw CODES_OPERATIONS.True.LOGIN_OPERATION
 
 		const data = await response.json()
 
+		console.log("valor de la data de usuario")
+		console.log(data)
+
+		data_user = { ...data_user, ...data }
+		
 		data_user.super_user = data.is_superuser
-		console.log("respuesta exitosa")
+
+		delete data_user.is_superuser
+		
 		return data_user
 
 	} catch (error) {
+		console.log(error)
 		throw error
 	}
 	
@@ -104,37 +111,39 @@ const initSocialAuthentication = data_social => async dispatch => {
 	try {
 		 
 		let data = await converToken(data_social.Zi.access_token)
-		console.log(data)
+	
 		setTokenConvertSuccess(data)
-		localStorage.setItem("token", data_social.Zi.access_token)
-		console.log("despues de success")
-		dispatch(setAuthenticating(false))
-		dispatch(setAuthenticated(true))
-		console.log("antes de setUserLog")
-		let data_user_complete = await setUserLog(data_social.profileObj, true)
-		console.log("despues de setUserLog")
-		console.log(data_user_complete)
-		dispatch(setUser(data_user_complete))
 
-		return true
+		localStorage.setItem("token", `${data_social.Zi.access_token}`)
+		localStorage.setItem("type", `Bearer`)
+		localStorage.setItem("backend", `${BACKENDS_PROVIDER.GOOGLE}`)
+		localStorage.setItem("data_user", data_social.profileObj)
+
+		
+		dispatch(setAuthenticated(true))
 
 	} catch (error) {
+		dispatch(setAuthenticating(false))
 		return false
 	}	
+
+	dispatch(setAuthenticating(false))
+
+	return true
 }
 
-const initAuthentication = (data_user, push) => async dispatch => {
+const initAuthentication = data_user => async dispatch => {
 
 	let headers = new Headers()
 
 	headers.append('Content-Type', 'application/json')
 	headers.append('Accept', 'application/json')
-
+	
 	const options = {
 		method : 'POST',
 		headers,
 		mode : 'cors',
-		body : data_user
+		body : JSON.stringify(data_user)
 	}
 
 	dispatch(setAuthenticating(true))
@@ -148,31 +157,29 @@ const initAuthentication = (data_user, push) => async dispatch => {
 
 		let json = await response.json()
 		
-		try {
-			let token_key = json['key']
-			
-			console.log(token_key)
+		let token_key = json['key']
+		
+		localStorage.setItem("token", `${token_key}`)
+		localStorage.setItem("type", `Token`)
+		localStorage.setItem("data_user", data_user)
 
-			setTokenConvertSuccess(token_key, null)
-			dispatch(setAuthenticated(true))
+		setTokenConvertSuccess(token_key, null)
 
-			let location = getObjectLocation(RouteDashboard)
+		dispatch(setAuthenticated(true))
 
-			dispatch(push(location))
-
-		} catch (error) {
-			console.log("error al obtener llave")
-			throw json
-		}
-	
 	} catch (error) {
-		console.log("en catch externo")
 		let json = await error.json()
-		console.log(json)
+
 		showMessage({type : 'error', message : json.non_field_errors})
+
+		dispatch(setAuthenticating(false))
+
+		return false
 	}	
 
 	dispatch(setAuthenticating(false))
+
+	return true
 }
 
 const sendUuidResetPassword = data => async dispatch => {
@@ -271,8 +278,6 @@ const initRegistration = data_user => async dispatch => {
 		showMessage({type : 'success', message : response.detail})
 
 	} catch (err) {
-		console.log("en error")
-		console.log(err)
 
 		dispatch(setRegistering(false))
 		dispatch(setRegistered(false))
@@ -285,6 +290,7 @@ const setConvertTokenFailure = operation => dispatch => {
 
 	dispatch(setAuthenticating(false))
 	dispatch(setAuthenticated(false))
+
 	operation && showMessage(operation)
 }
 
@@ -294,7 +300,7 @@ const setTokenConvertSuccess = (payload, operation) => {
 	const keys = Object.keys(payload)
 
 	if(keys.length > 1){
-		console.log("en object token")
+		
 		let expiryDate = Math.round(new Date().getTime() / 1000) + payload.expires_in
 
 		localStorage.setItem("access_token_converted", payload.access_token)
@@ -302,19 +308,17 @@ const setTokenConvertSuccess = (payload, operation) => {
 		localStorage.setItem("access_token_expires_in", expiryDate)
 		
 	}else{
-		console.log("en token")
+		
 		localStorage.setItem("access_token_converted", payload)
 		
 	}	
 	
 	operation && showMessage(operation)
 
-	console.log("al final de la funcionn de conver token success")
 }
 
 const converToken = async access_token  => {
-	console.log("convirtiendo token")
-	console.log(access_token)
+
 	const searchParams = new URLSearchParams()
 	
 	searchParams.set("grant_type", "convert_token");
@@ -369,6 +373,7 @@ export {
 	SUCCESS_TOKEN_CONVERT,
 	FAILURE_TOKEN_CONVERT,
 	SET_STEP,
+	setUser,
 	setUserLog,
 	setStep,
 	initRegistration,

@@ -3,7 +3,11 @@ import SectionTracking from './../../../../components/OperationSection/SectionTr
 import { connect } from 'react-redux'
 import toPairs from 'lodash.topairs'
 import { POSITIONS } from './../../../../constants/withPanel'
-import { selectDevice } from './../../../../actions/DeviceActions'
+import { 
+  selectDevice,
+  getLastPosition,
+  getIntervalPosition
+} from './../../../../actions/DeviceActions'
 
 class SectionTrackingView extends Component {
 
@@ -23,8 +27,13 @@ class SectionTrackingView extends Component {
     this.positions = null
   }
 
-  componentWillMount = (nextProps) => {
+  componentWillMount = (prevProps, nextProps) => {
+   console.log(prevProps)
    console.log(nextProps)
+  }
+
+  componentDidMount = () => {
+    this.props.getLastPosition(this.props.device_selected)
   }
 
   validateRangeDate = () => {
@@ -109,8 +118,7 @@ class SectionTrackingView extends Component {
   render() {
    
     let positions = this.positions || this.props.positions[this.props.positions.length - 1]
-    console.log("en section tracking" + this.props.selected)
-    console.log("y mis posiciones son : " + positions)
+  
     return (
       <SectionTracking
         devices = { this.getArrayDevices() }
@@ -126,11 +134,13 @@ class SectionTrackingView extends Component {
 const mapStateToProps = (state) => ({
   devices : state.devices,
   selected : state.device_selected,
-  positions : POSITIONS[state.device_selected],
+  positions : state.positions[state.device_selected],
 })
 
 const mapDispatchToProps = {
-  selectDevice : selectDevice
+  selectDevice,
+  getLastPosition,
+  getIntervalPosition
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SectionTrackingView)

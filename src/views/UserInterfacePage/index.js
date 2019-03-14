@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { addDevice, setDevices } from './../../actions/DeviceActions'
+import { setAuthenticated, setUser } from './../../actions/LoginRegisterAction'
+import { removeAllDevice } from './../../actions/DeviceActions'
 import { withRouter } from 'react-router-dom' 
 import PanelInterface from './../../components/UserInterface'
 
@@ -10,6 +11,8 @@ class UserInterfazView extends Component{
         return(
             <PanelInterface
                 data_user = { this.props.data_user }
+                removeAllDevice = { this.props.removeAllDevice }
+                setUser = { this.props.setUser }
             />
         )
     }
@@ -18,11 +21,15 @@ class UserInterfazView extends Component{
 
 const mapStateToProps = state => (
     {
-        data_user : state.data_user
+        setAuthenticated,
+        data_user : state.data_user,
     }
 )
 
 const mapDispatchToProps = {
+    setAuthenticated,
+    removeAllDevice,
+    setUser
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(UserInterfazView))
