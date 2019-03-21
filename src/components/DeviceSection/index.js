@@ -6,7 +6,6 @@ import { Card, CardHeader, CardBody } from 'reactstrap'
 import ButtonOperation from './ButtonsOperation'
 import { Row, Col } from 'antd'
 
-import  { DEVICES } from './../../constants/withPanel'
 
 class DeviceSection extends Component {
 

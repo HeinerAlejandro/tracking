@@ -49,23 +49,28 @@ const setLinkShopInServer = (link) => async dispatch => {
 
     
     headers.append('Authorization', `${type} ${backend} ${token}`)
+    headers.append('Content-Type', 'application/json')
+    
 
-    let body = new FormData()
-
-    body.append('link', link)
+    let body = { link }
 
     const options = {
         method : 'POST',
         headers : headers,
-        body : body
+        body : JSON.stringify(body)
     }
-    console.log(link)
+   
     try{
         const response = await fetch(URL_LINK_SHOP, options)
+
+        message.config({
+            top : 100
+        })
 
         if(!response.ok)
             throw response
 
+       
         message.success("Link establecido con exito")
 
         dispatch(setLinkShop({link : link}))

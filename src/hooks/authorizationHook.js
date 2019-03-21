@@ -9,7 +9,7 @@ const authorizationHook = WrapComponent => {
             const authorized = this.props.isSuperuser
             
             return(
-                authorized && <WrapComponent {...this.props} /> || <Icon type = 'loading' />
+                (authorized && <WrapComponent {...this.props} />) || <Icon type = 'loading' />
             )
         }
     }

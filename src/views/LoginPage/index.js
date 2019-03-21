@@ -1,4 +1,4 @@
-import React, {Component, Fragment} from 'react'
+import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import FormRegister from './../../components/FormRegister'
 import FormSession from './../../components/FormSession'
@@ -63,9 +63,10 @@ class LoginPage extends Component{
 
 		let status = await this.props.initAuthentication(data_user)
 
-		if(status)
+		if(status){
+
 			this.props.history.push(RouteDashboard)
-		else
+		}else
 			message.error("Error al autenticar")
 
 	}

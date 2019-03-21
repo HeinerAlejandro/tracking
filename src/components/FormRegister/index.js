@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react'
+import React from 'react'
 import { Form, Input, Checkbox, Button, Icon } from 'antd'
 import './styles.css'
 

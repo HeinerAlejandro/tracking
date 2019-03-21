@@ -12,7 +12,6 @@ import userDataReducer from './userDataReducer'
 import LinkReducer from './LinkReducer'
 import addPositionDeviceReducer from './AddPositionDevice'
 
-import { routerReducer } from 'react-router-redux'
 
 import { combineReducers } from 'redux'
 
@@ -28,7 +27,6 @@ const ManagerReducer = combineReducers({
 	device_selected : selectDeviceReducer,
 	filter_search : filterSearchReducer,
 	visible_form_device : visibleFormReducer,
-	routing: routerReducer,
 	link: LinkReducer,
 	positions: addPositionDeviceReducer
 }) 

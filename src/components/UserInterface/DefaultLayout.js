@@ -7,21 +7,14 @@ import {
   CLIENT_ID_DJANGO,
   CLIENT_SECRET_DJANGO
 } from '../../constants/withTokens'
-
+import {store} from './../../store'
 import {
   AppAside,
   AppBreadcrumb,
   AppFooter,
   AppHeader,
-  AppSidebar,
-  AppSidebarFooter,
-  AppSidebarForm,
-  AppSidebarHeader,
-  AppSidebarMinimizer,
-  AppSidebarNav,
 } from '@coreui/react'
 // sidebar nav config
-import navigation from '../../_nav'
 // routes config
 import routes from '../../Routes/PanelRouters'
 
@@ -48,12 +41,16 @@ class DefaultLayout extends Component {
     const token = localStorage.getItem('token')
     const type = localStorage.getItem('type')
 
+    localStorage.removeItem('token')
     localStorage.removeItem('backend')
     localStorage.removeItem('type')
+    localStorage.removeItem('access_token_converted')
+    localStorage.removeItem('data_user')
+    localStorage.removeItem('access_token_expires_in')
+    localStorage.removeItem('refresh_token_converted')
 
     if(type === 'Bearer'){
-      const backend = localStorage.getItem('backend')
-
+    
       localStorage.removeItem('backend')
 
       fetch('http://localhost:8000/auth/revoke-token',{
@@ -67,7 +64,9 @@ class DefaultLayout extends Component {
 
     }
     
-    this.props.setUser({})
+    store.dispatch(this.props.setUser({}))
+    store.dispatch(this.props.setAuthenticated(false))
+    
     this.props.removeAllDevice()
     this.props.history.push('/')
   }

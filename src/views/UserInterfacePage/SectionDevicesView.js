@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import DeviceSection from './../../components/DeviceSection'
 import { connect } from 'react-redux'
-import { DEVICES, URL_DEVICE } from './../../constants/withPanel'
 import {
     setFilterSearchDevice,
     setVisibleForm,

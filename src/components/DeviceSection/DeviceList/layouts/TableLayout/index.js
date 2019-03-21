@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { Table } from 'reactstrap'
 import { Header as _Header } from './Header'
 import { Body as _Body } from './Body'

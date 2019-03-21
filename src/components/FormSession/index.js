@@ -33,29 +33,7 @@ class FormSession extends React.Component {
 	}
   
 	render() {
-	  const { getFieldDecorator } = this.props.form;
-  
-	  const formItemLayout = {
-		wrapperCol: {
-		  xs: {
-			span: 20,
-			offset: 2
-		  },
-		  sm: {
-			span: 20,
-			offset: 2
-		  },
-		  md: {
-			span : 16,
-			offset : 4
-		  }, 
-		  lg: {
-			span : 9,
-			offset : 3
-		  }
-		}
-	}
-		
+	  const { getFieldDecorator } = this.props.form	
 		const buttonsLayout = {
 			wrapperCol : {
 				lg :{

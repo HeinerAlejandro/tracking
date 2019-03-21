@@ -36,7 +36,7 @@ class index extends Component {
 
     render() {
         
-        const { getFieldDecorator, getFieldValue } = this.props.form;
+        const { getFieldDecorator } = this.props.form;
         var props_field = {}
         var fields = null
 

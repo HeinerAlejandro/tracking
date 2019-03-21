@@ -1,11 +1,13 @@
 import URLSearchParams from "url-search-params";
 
 import { message } from 'antd'
-import {URL_SERVER, 
-		CLIENT_ID_DJANGO,
-		CLIENT_SECRET_DJANGO, 
-		BACKENDS_PROVIDER,
-		CODES_OPERATIONS} from './../constants/withTokens'
+import {
+	URL_SERVER, 
+	CLIENT_ID_DJANGO,
+	CLIENT_SECRET_DJANGO, 
+	BACKENDS_PROVIDER,
+	CODES_OPERATIONS
+} from './../constants/withTokens'
 
 import {
 	readObjectResponseOperation,
@@ -57,7 +59,7 @@ const setUserLog = async (data_user = null, social = false) => {
 			}
 		}
 
-		const response = await fetch('http://127.0.0.1:8000/user/', data_request)
+		const response = await fetch(`${URL_SERVER}/user/`, data_request)
 
 		if(!response.ok)
 			throw CODES_OPERATIONS.True.LOGIN_OPERATION
@@ -150,7 +152,7 @@ const initAuthentication = data_user => async dispatch => {
 
 	try {
 
-		let response = await fetch("http://127.0.0.1:8000/accounts/login/", options)
+		let response = await fetch(`${URL_SERVER}/accounts/login/`, options)
 
 		if(!response.ok)
 			throw response
@@ -170,7 +172,7 @@ const initAuthentication = data_user => async dispatch => {
 	} catch (error) {
 		let json = await error.json()
 
-		showMessage({type : 'error', message : json.non_field_errors})
+		message.error(json.non_field_errors)
 
 		dispatch(setAuthenticating(false))
 
@@ -187,7 +189,7 @@ const sendUuidResetPassword = data => async dispatch => {
 	header.append('Content-Type', 'application/json')
 
 	try{
-		const response = await fetch('http://127.0.0.1:8000/accounts/password/reset/confirm/', {
+		const response = await fetch(`${URL_SERVER}/accounts/password/reset/confirm/`, {
 									method : 'POST',
 									mode : 'cors',
 									headers: header,
@@ -218,7 +220,7 @@ const sendEmailResetPassword = email => async dispatch => {
 
 	try{
 	
-		const response = await fetch('http://127.0.0.1:8000/accounts/password/reset/', {
+		const response = await fetch(`${URL_SERVER}/accounts/password/reset/`, {
 									method : 'POST',
 									mode : 'cors',
 									headers: header,
@@ -268,7 +270,7 @@ const initRegistration = data_user => async dispatch => {
 
 	try {
 
-		const response = await fetch("http://127.0.0.1:8000/accounts/registration/", HEADER)
+		const response = await fetch(`${URL_SERVER}/accounts/registration/`, HEADER)
 		const object = await response.json()
 
 		if(!response.ok)
@@ -338,7 +340,7 @@ const converToken = async access_token  => {
 	}
 
 	try{
-		const response = await fetch("http://127.0.0.1:8000/auth/convert-token", headers)
+		const response = await fetch(`${URL_SERVER}/auth/convert-token`, headers)
 		
 
 		if(!response.ok){
@@ -356,7 +358,6 @@ const converToken = async access_token  => {
 		throw error
 	}	      
 }
-
 
 export {
 	SET_USER_LOG,

@@ -1,7 +1,6 @@
 import { URL_DEVICES } from './../constants/withPanel'
 import { message } from 'antd'
 import { toPairs } from 'lodash.topairs'
-import { async } from 'q';
 
 const ADD_DEVICE = 'ADD_DEVICE'
 const REMOVE_ALL_DEVICES = 'REMOVE_ALL_DEVICES'
@@ -78,8 +77,6 @@ const fetchCreateDevice = device => async dispatch => {
 
     let headers = new Headers() 
 
-    headers.append('Accept', 'application/json')
-
     let token = localStorage.getItem('token')
     let type = localStorage.getItem('type')
     let backend = localStorage.getItem('backend') === null?'':localStorage.getItem('backend')
@@ -100,27 +97,30 @@ const fetchCreateDevice = device => async dispatch => {
         if(!response.ok)
             throw response
         
-       
+       console.log(response)
         const json = await response.json()
-        
+
+        message.config({
+            top:100
+        })
+
         message.success("dispositivo registrado")
 
        let { serial } =  json 
-
+       
        delete json.serial
+      
+       let device = json
 
-       let device = toPairs(json)
-
-       dispatch(addDevice({serial:serial, device:device[1]}))
+       dispatch(addDevice({serial:serial, device }))
 
     }catch(err){
-
         message.error("No se pudo registrar el dispotivo")
     }
 }
 
 const getDevicesFromServer = () => async dispatch => {
-
+    console.log("OBTENIENDO DEL SERVER DEVICED")
     try {
 
         let headers = new Headers()
@@ -145,7 +145,7 @@ const getDevicesFromServer = () => async dispatch => {
             throw response
 
         const devices = await response.json()
-
+        console.log(devices)
         dispatch(setDevices(devices))
 
     }catch(err){

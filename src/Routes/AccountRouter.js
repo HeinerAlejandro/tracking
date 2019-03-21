@@ -4,7 +4,7 @@ import UserInterfazView from './../views/UserInterfacePage'
 import { withRouter } from 'react-router'
 
 
-const RouteDashboard = 'account/dashboard'
+const RouteDashboard = '/account/dashboard'
 
 const isLogged = () => {
   let access_token = localStorage.getItem('token')

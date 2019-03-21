@@ -1,6 +1,6 @@
 import React from 'react'
-import {   Card, CardBody, CardHeader, Col, Row ,
-    FormText,Input,FormGroup,Button
+import {   Card, CardBody, CardHeader, Col ,
+    FormText,Input,Button
     ,Label } from 'reactstrap';
 
 const ModiFyPasswordComponent = (props) => {

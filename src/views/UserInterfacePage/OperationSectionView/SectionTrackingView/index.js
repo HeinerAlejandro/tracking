@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import SectionTracking from './../../../../components/OperationSection/SectionTracking'
 import { connect } from 'react-redux'
 import toPairs from 'lodash.topairs'
-import { POSITIONS } from './../../../../constants/withPanel'
 import { 
   selectDevice,
   getLastPosition,
