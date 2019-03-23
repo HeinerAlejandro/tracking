@@ -8,13 +8,13 @@ const ContentSocialButtons = ({successProvider, successFailure, google_icon}) =>
 	return(
 		<div>
 			<GoogleSocialLogin
-			    clientId = "254472747355-6umtrkcedqn00tg7ec17l705ftttam0r.apps.googleusercontent.com"
+			    clientId = "210792263208-5ph8ka5gth3dlh5bakt27c8mk3vusdqv.apps.googleusercontent.com"
 			    onSuccess = {successProvider}
 			    onFailure = {successFailure}
 				icon = {false}
 			    className = "login-button login-button-google"
-			    prompt = "select_account"
-			    redirectUri = "https://heiner.pythonanywhere.com/account" >
+			    
+			    redirectUri = "http://heiner.pythonanywhere.com/account" >
 
 				<Icon
 					style = {{width : '30px'}}

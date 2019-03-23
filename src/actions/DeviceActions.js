@@ -1,6 +1,5 @@
 import { URL_DEVICES } from './../constants/withPanel'
 import { message } from 'antd'
-import { toPairs } from 'lodash.topairs'
 
 const ADD_DEVICE = 'ADD_DEVICE'
 const REMOVE_ALL_DEVICES = 'REMOVE_ALL_DEVICES'
