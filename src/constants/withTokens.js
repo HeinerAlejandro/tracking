@@ -1,4 +1,4 @@
-const URL_SERVER = 'http://127.0.0.1:8000'
+const URL_SERVER = window.location.origin
 
 const CLIENT_ID_DJANGO = 'jkMZV7VFMJgoL2dkAvBi6LeuPE6JAXKiehkggXSW'
 const CLIENT_SECRET_DJANGO = 'NmY1obFurKkolS0re5mrEDKrF0ipgxbZxWs6Q77aMTxIJsLAw4EFrChHkSpFX6TeH2YZubQc0qf1GH2KLce0S33wSyYGRbx0R4jLFzzNCVnU1tLxvamTeJtu70Hlxxhr'

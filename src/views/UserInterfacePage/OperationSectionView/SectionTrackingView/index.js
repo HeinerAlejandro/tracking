@@ -32,7 +32,7 @@ class SectionTrackingView extends Component {
   }
 
   componentDidMount = () => {
-    this.props.getLastPosition(this.props.device_selected)
+    this.props.getLastPosition(this.props.selected)
   }
 
   validateRangeDate = () => {
@@ -52,6 +52,7 @@ class SectionTrackingView extends Component {
   obtainDate = date => (
     new Date(date[0], date[1], date[2], date[3], date[4])
   )
+
   obtainSplitDate = (date, regex) => (
     date.split(regex)
   )
@@ -96,8 +97,19 @@ class SectionTrackingView extends Component {
     if(isFullInputsDate)
       this.positions = null
 
-    if(isFullInputsDate && isValidRangeDates)
+    if(isFullInputsDate && isValidRangeDates){
+
+      let interval = {
+        init : this.firstDateTime,
+        final : this.secondDateTime,
+        device : this.props.selected
+
+      }
+
+      this.props.getIntervalPosition()
       this.setDeviceRanges()
+    }
+      
   }
 
   getArrayDevices = () => (
