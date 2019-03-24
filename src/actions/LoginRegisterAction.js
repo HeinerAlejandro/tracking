@@ -59,7 +59,7 @@ const setUserLog = async (data_user = null, social = false) => {
 			}
 		}
 
-		const response = await fetch(`${URL_SERVER}/user/`, data_request)
+		const response = await fetch(`${URL_SERVER}/user`, data_request)
 
 		if(!response.ok)
 			throw CODES_OPERATIONS.True.LOGIN_OPERATION
@@ -154,10 +154,10 @@ const initAuthentication = data_user => async dispatch => {
 
 		let response = await fetch(`${URL_SERVER}/accounts/login/`, options)
 
-		if(!response.ok)
-			throw response
-
 		let json = await response.json()
+		console.log(json)
+		if(!response.ok)
+			throw json
 		
 		let token_key = json['key']
 		
@@ -170,9 +170,9 @@ const initAuthentication = data_user => async dispatch => {
 		dispatch(setAuthenticated(true))
 
 	} catch (error) {
-		let json = await error.json()
-
-		message.error(json.non_field_errors)
+		
+		console.log(error)
+		message.error(error.non_field_errors)
 
 		dispatch(setAuthenticating(false))
 
