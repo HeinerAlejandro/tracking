@@ -65,7 +65,7 @@ class SectionDevicesView extends Component {
 }
 
 const mapStateToProps = state => ({
-    role : state.data_user.role,
+    role : state.data_user.super_user,
     devices : state.devices,
     filter_search : state.filter_search,
     visible_form : state.visible_form_device,

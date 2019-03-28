@@ -15,7 +15,7 @@ const authorizationHook = WrapComponent => {
     }
 
     const mapStateToProps = state => ({
-        isSuperuser : state.data_user.role
+        isSuperuser : state.data_user.super_user
     })
 
     return connect(mapStateToProps, null)(authorizationComponent)

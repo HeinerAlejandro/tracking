@@ -14,7 +14,7 @@ const ContentSocialButtons = ({successProvider, successFailure, google_icon}) =>
 				icon = {false}
 			    className = "login-button login-button-google"
 			    
-			    redirectUri = "http://heiner.pythonanywhere.com/account" >
+			    redirectUri = "https://heiner.pythonanywhere.com/account" >
 
 				<Icon
 					style = {{width : '30px'}}

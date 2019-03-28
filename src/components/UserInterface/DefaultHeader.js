@@ -35,6 +35,9 @@ class DefaultHeader extends Component {
           <NavItem className="px-3">
             <Link to="/account/settings">Ajustes</Link>
           </NavItem>
+          <NavItem className="px-3">
+            <Link to="/account/profile">Profile</Link>
+          </NavItem>
         </Nav>
         <Nav className="ml-auto" navbar>
           <NavItem className="d-md-down-none">
@@ -48,7 +51,7 @@ class DefaultHeader extends Component {
           </NavItem>
           <AppHeaderDropdown direction="down">
             <DropdownToggle nav>
-              <img src={ this.props.data_user.imageUrl ?  this.props.data_user.imageUrl : 'resources/user-not-found.npg'} className= { !this.props.data_user.imageUrl ? "img-avatar" : '' } alt = { this.props.data_user.name } />
+              <img src={ this.props.data_user.imageUrl ?  this.props.data_user.imageUrl : 'resources/user-not-found.png'} className= { !this.props.data_user.imageUrl ? "img-avatar" : '' } alt = { this.props.data_user.name } />
             </DropdownToggle>
             <DropdownMenu right style={{ right: 'auto' }}>
               <DropdownItem header tag="div" className="text-center"><strong>Account</strong></DropdownItem>

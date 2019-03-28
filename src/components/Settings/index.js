@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Col, Row } from 'reactstrap';
 
-import FormPassword from './ModiFyPasswordComponent'
 import FormLinkShop from './modifyLinkShopComponent'
 
 class Settings extends Component {
@@ -10,11 +9,6 @@ class Settings extends Component {
 
     return (
       <div className="animated fadeIn">
-        <Row className="justify-content-center">
-          <Col xs="12" lg="0">
-            <FormPassword />
-          </Col>           
-        </Row>
         <Row className="justify-content-center">
           <Col xs="12" lg="0">
             <FormLinkShop

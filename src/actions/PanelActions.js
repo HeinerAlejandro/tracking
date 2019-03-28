@@ -1,6 +1,11 @@
-import { URL_LINK_SHOP } from './../constants/withPanel'
+import { 
+    URL_LINK_SHOP,
+    URL_RESET_PASSWORD } from './../constants/withPanel'
 import { message } from 'antd';
 
+let token = localStorage.getItem('token')
+let type = localStorage.getItem('type')
+let backend = localStorage.getItem('backend') === null?'':localStorage.getItem('backend')
 
 const SET_LINK_SHOP = 'SET_LINK_SHOP'
 
@@ -9,9 +14,7 @@ const getLinkShopFromServer = () => async dispatch => {
     try{
         let headers = new Headers()
 
-        let token = localStorage.getItem('token')
-        let type = localStorage.getItem('type')
-        let backend = localStorage.getItem('backend') === null?'':localStorage.getItem('backend')
+       
 
         headers.append('Content-Type', 'application/json')
         headers.append('Accept', 'application/json')
@@ -42,11 +45,6 @@ const getLinkShopFromServer = () => async dispatch => {
 const setLinkShopInServer = (link) => async dispatch => {
 
     let headers = new Headers()
-
-    let token = localStorage.getItem('token')
-    let type = localStorage.getItem('type')
-    let backend = localStorage.getItem('backend') === null?'':localStorage.getItem('backend')
-
     
     headers.append('Authorization', `${type} ${backend} ${token}`)
     headers.append('Content-Type', 'application/json')
@@ -80,7 +78,38 @@ const setLinkShopInServer = (link) => async dispatch => {
         console.log(m)
         message.error("Error al establecer el link de la tienda")
     }
-}   
+}
+
+const resetPassword = data_reset => async dispatch => {
+
+    let headers = new headers()
+
+    headers.append('Authorization', `${type} ${backend} ${token}`)
+    
+    let body = data_reset
+
+    const options = {
+        method : 'POST',
+        headers : headers,
+        body : JSON.stringify(body)
+    }
+
+    try{
+        const response = await fetch(URL_RESET_PASSWORD, options)
+
+        const json =  await response.json()
+
+        if(!response.ok)
+            throw json
+
+        message.success(json.detail)
+
+    }catch(error){
+        console.log(error)
+        message.error(error.detail)
+    }
+
+}
 
 const setLinkShop = (payload) => ({
     type : SET_LINK_SHOP,
@@ -91,5 +120,6 @@ export {
     SET_LINK_SHOP,
     setLinkShop,
     setLinkShopInServer,
-    getLinkShopFromServer
+    getLinkShopFromServer,
+    resetPassword
 }

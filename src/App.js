@@ -14,7 +14,7 @@ class App extends Component {
     if(this.props.authenticated || isLogged()){
    
       let data = localStorage.getItem("data_user")
-    
+      
       let data_user_complete = setUserLog(data)
 
       data_user_complete.then(data_user_complete => {

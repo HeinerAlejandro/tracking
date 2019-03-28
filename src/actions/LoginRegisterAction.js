@@ -277,7 +277,7 @@ const initRegistration = data_user => async dispatch => {
 			throw object 
 
 
-		showMessage({type : 'success', message : response.detail})
+		message.success("se ha enviado un correo de verificacion a su correo electronico")
 
 	} catch (err) {
 
@@ -322,7 +322,7 @@ const setTokenConvertSuccess = (payload, operation) => {
 const converToken = async access_token  => {
 
 	const searchParams = new URLSearchParams()
-	
+	console.log(access_token)
 	searchParams.set("grant_type", "convert_token");
     searchParams.set("client_id", CLIENT_ID_DJANGO);
     searchParams.set("client_secret", CLIENT_SECRET_DJANGO);
