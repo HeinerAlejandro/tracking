@@ -43,10 +43,11 @@ export default class ImageProfile extends Component {
   }
 
   render() {
+
+    const type_icon = (this.state.loading && 'loading') || ''
     return (
       <>
         <h3>Agregue una foto de perfil</h3>
-        <Card>
             <Upload
                 name = 'avatar'
                 action = { URL_PROFILE_IMAGE }
@@ -58,15 +59,14 @@ export default class ImageProfile extends Component {
                 }}
             >
               <div>
-                <Icon type = { this.state.loading ? 'loading' : 'plus' } />
+                <Icon type = { type_icon } />
                 <img 
-                  src = { this.props.image ? this.props.image : 'resources/user-not-found.png' }
-                  style = {{ width : '75px' }}
+                  src = { this.props.image ? 'http://localhost:8000'+this.props.image : 'http://localhost:8000/media/user-not-found.png' }
+                  style = {{ width : '102px' }}
                 />
 
               </div>
             </Upload>
-        </Card>
       </>
     )
   }

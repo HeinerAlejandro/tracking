@@ -11,6 +11,7 @@ const envolveTd = data => (
 
 const createOption = (data, styles) => (
     <Option
+        key = { data }
         value = { data }
         style = { styles }    
     >

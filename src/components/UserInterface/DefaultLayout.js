@@ -39,15 +39,18 @@ class DefaultLayout extends Component {
 
   loading = () => <Icon type =  'loading'/>
 
-  redirectToSettigns = () => {
+  redirectToSettigns = (e) => {
+    e.preventDefault()
     this.props.history.push('/account/settigns')
   }
 
-  redirectToProfile = () => {
+  redirectToProfile = (e) => {
+    e.preventDefault()
     this.props.history.push('/account/profile')
   }
 
   signOut(e) {
+   
     e.preventDefault()
     
     const token = localStorage.getItem('token')

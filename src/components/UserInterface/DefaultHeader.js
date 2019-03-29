@@ -44,13 +44,12 @@ class DefaultHeader extends Component {
           
           <AppHeaderDropdown direction="down">
             <DropdownToggle nav>
-              <img src={ this.props.image ?  this.props.data_user.imageUrl : '/media/user-not-found.png'} className= { !this.props.data_user.imageUrl ? "img-avatar" : '' } alt = { this.props.data_user.name } />
+              <img src={ this.props.data_user.imageUrl ?   'http://localhost:8000'+this.props.data_user.imageUrl : 'http://localhost:8000/media/user-not-found.png'} className=  "img-avatar" alt = { this.props.data_user.name } />
             </DropdownToggle>
             <DropdownMenu right style={{ right: 'auto' }}>
-            <img src={ this.props.data_user.imageUrl ?  this.props.image : '/media/user-not-found.png'} style = {{marginLeft: 'calc(50% - 300*0.5)', width:300}} />
-              <DropdownItem onclick = {e => this.props.redirectProfile(e) } ><i className="fa fa-user"></i>Perfil</DropdownItem>
-              <DropdownItem onclick = {e => this.props.redirectSettigns(e) }><i className="fa fa-wrench"></i>Ajustes</DropdownItem>
-              <DropdownItem onclick={e => this.props.onLogout(e)}><i className="fa fa-lock"></i>cerrar sesion</DropdownItem>
+              <DropdownItem onClick = {e => this.props.redirectProfile(e) } ><i className="fa fa-user"></i>Perfil</DropdownItem>
+              <DropdownItem onClick = {e => this.props.redirectSettigns(e) }><i className="fa fa-wrench"></i>Ajustes</DropdownItem>
+              <DropdownItem onClick={e => this.props.onLogout(e)}><i className="fa fa-lock"></i>cerrar sesion</DropdownItem>
             </DropdownMenu>
           </AppHeaderDropdown>
         </Nav>
