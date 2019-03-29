@@ -7,6 +7,7 @@ import { AppAsideToggler, AppHeaderDropdown, AppNavbarBrand, AppSidebarToggler }
 import logo from '../../resources/location.svg'
 import sygnet from '../../assets/img/brand/sygnet.svg'
 import './styles.css'
+import { callbackify } from 'util';
 const propTypes = {
   children: PropTypes.node,
 };
@@ -21,13 +22,10 @@ class DefaultHeader extends Component {
 
     return (
       <React.Fragment>
-        <AppSidebarToggler className="d-lg-none" display="md" mobile />
         <AppNavbarBrand
-          full={{ src: logo, width: 89, height: 25, alt: 'CoreUI Logo' }}
-          minimized={{ src: sygnet, width: 30, height: 30, alt: 'CoreUI Logo' }}
+          full={{ src: logo, width: 89, height: 25, alt: 'logo' }}
+          minimized={{ src: sygnet, width: 30, height: 30, alt: 'logo' }}
         />
-        <AppSidebarToggler className="d-md-down-none" display="lg" />
-
         <Nav className="d-md-down-none" navbar>
           <NavItem className="px-3">
             <Link to ="/account/dashboard">Inicio</Link>
@@ -36,35 +34,27 @@ class DefaultHeader extends Component {
             <Link to="/account/settings">Ajustes</Link>
           </NavItem>
           <NavItem className="px-3">
-            <Link to="/account/profile">Profile</Link>
+            <Link to="/account/profile">Perfil</Link>
           </NavItem>
         </Nav>
         <Nav className="ml-auto" navbar>
           <NavItem className="d-md-down-none">
             <NavLink href="#"><i className="icon-bell"></i><Badge pill color="danger">5</Badge></NavLink>
           </NavItem>
-          <NavItem className="d-md-down-none">
-            <NavLink href="#"><i className="icon-list"></i></NavLink>
-          </NavItem>
-          <NavItem className="d-md-down-none">
-            <NavLink href="#"><i className="icon-location-pin"></i></NavLink>
-          </NavItem>
+          
           <AppHeaderDropdown direction="down">
             <DropdownToggle nav>
-              <img src={ this.props.data_user.imageUrl ?  this.props.data_user.imageUrl : 'resources/user-not-found.png'} className= { !this.props.data_user.imageUrl ? "img-avatar" : '' } alt = { this.props.data_user.name } />
+              <img src={ this.props.image ?  this.props.data_user.imageUrl : '/media/user-not-found.png'} className= { !this.props.data_user.imageUrl ? "img-avatar" : '' } alt = { this.props.data_user.name } />
             </DropdownToggle>
             <DropdownMenu right style={{ right: 'auto' }}>
-              <DropdownItem header tag="div" className="text-center"><strong>Account</strong></DropdownItem>
-              <DropdownItem header tag="div" className="text-center"><strong>Settings</strong></DropdownItem>
-              <DropdownItem><i className="fa fa-user"></i> Profile</DropdownItem>
-              <DropdownItem><i className="fa fa-wrench"></i> Ajustes</DropdownItem>
-              <DropdownItem divider />
-              <DropdownItem onClick={e => this.props.onLogout(e)}><i className="fa fa-lock"></i> Logout</DropdownItem>
+            <img src={ this.props.data_user.imageUrl ?  this.props.image : '/media/user-not-found.png'} style = {{marginLeft: 'calc(50% - 300*0.5)', width:300}} />
+              <DropdownItem onclick = {e => this.props.redirectProfile(e) } ><i className="fa fa-user"></i>Perfil</DropdownItem>
+              <DropdownItem onclick = {e => this.props.redirectSettigns(e) }><i className="fa fa-wrench"></i>Ajustes</DropdownItem>
+              <DropdownItem onclick={e => this.props.onLogout(e)}><i className="fa fa-lock"></i>cerrar sesion</DropdownItem>
             </DropdownMenu>
           </AppHeaderDropdown>
         </Nav>
-        <AppAsideToggler className="d-md-down-none" />
-        {/*<AppAsideToggler className="d-lg-none" mobile />*/}
+        
       </React.Fragment>
     );
   }

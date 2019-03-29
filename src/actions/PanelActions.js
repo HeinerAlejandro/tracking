@@ -24,7 +24,7 @@ const getLinkShopFromServer = () => async dispatch => {
         headers.append('Content-Type', 'application/json')
         headers.append('Accept', 'application/json')
         headers.append('Authorization', `${type} ${backend} ${token}`)
-
+        console.log(`${type} ${backend} ${token}`)
         const options = {
             method : 'get',
             mode : 'cors',

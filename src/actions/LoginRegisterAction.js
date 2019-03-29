@@ -17,7 +17,7 @@ import {
 import { RouteDashboard } from '../Routes/AccountRouter'
 
 const SET_USER_LOG = 'SET_USER_LOG'
-
+const SET_NULL_USER = 'SET_NULL_USER'
 const SET_VISIBLE_RESET_PASSWORD = 'SET_VISIBLE_RESET_PASSWORD'
 
 const SET_VISIBLE_LOGIN = 'SET_VISIBLE_LOGIN'
@@ -41,7 +41,10 @@ const SENT_EMAIL_RESET_PASSWORD = 'SENT_EMAIL_RESET_PASSWORD'
 const SENDING_EMAIL_RESET_PASSWORD = 'SENDING_EMAIL_RESET_PASSWORD'
 
 const setUser = payload => ({ type : SET_USER_LOG, payload })
-
+const setNullUser = (payload) => ({
+	type : SET_NULL_USER,
+	payload
+})
 const setUserLog = async (data_user = null, social = false) => {
 	console.log("en set userlog")
 	console.log(data_user)
@@ -361,6 +364,7 @@ const converToken = async access_token  => {
 
 export {
 	SET_USER_LOG,
+	SET_NULL_USER,
 	SENT_EMAIL_RESET_PASSWORD,
 	SENDING_EMAIL_RESET_PASSWORD,
 	SET_VISIBLE_RESET_PASSWORD,
@@ -375,6 +379,7 @@ export {
 	FAILURE_TOKEN_CONVERT,
 	SET_STEP,
 	setUser,
+	setNullUser,
 	setUserLog,
 	setStep,
 	initRegistration,

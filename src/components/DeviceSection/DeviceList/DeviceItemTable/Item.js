@@ -34,7 +34,6 @@ const envolveSelect = (data, forDefault) => (
 export const Item = ({type, values, forDefault = null, optionStyle = null}) => {
     var toRender = null
     
-    console.log(values)
     if(type === 'simple' && typeof values === 'string')
         toRender = envolveTd(values)
         

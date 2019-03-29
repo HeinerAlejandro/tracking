@@ -52,6 +52,7 @@ class SectionDevicesView extends Component {
 
         return (
             <DeviceSection
+                link = { this.props.link }
                 role = { this.props.role }
                 devices = { devices }
                 handleChangeSearch = { this.handleChangeSearch }   
@@ -65,6 +66,7 @@ class SectionDevicesView extends Component {
 }
 
 const mapStateToProps = state => ({
+    link : state.link,
     role : state.data_user.super_user,
     devices : state.devices,
     filter_search : state.filter_search,

@@ -17,6 +17,8 @@ class DeviceSection extends Component {
     this.getCardTable = this.getCardTable.bind(this)
     this.handleClickRegister = this.handleClickRegister.bind(this)
     this.getColums = this.getColums.bind(this)
+    this.handleClickShop = this.handleClickShop.bind(this)
+
   }
 
   getColums = () => (
@@ -38,11 +40,19 @@ class DeviceSection extends Component {
       ]
   )
 
-  handleClickRegister = () => (
+  handleClickRegister = () => 
     this.props.visible_form 
         ? this.props.setVisibleForm(false)
         : this.props.setVisibleForm(true)
-  )
+  
+
+  handleClickShop = () => {
+    const a = document.createElement("a");
+		a.target = "_blank";
+		a.href = this.props.link;
+		a.click();
+  }
+    
 
   getButtonsOperations = () => (
     <Row gutter = { 10 }>
@@ -53,6 +63,7 @@ class DeviceSection extends Component {
           color = "ghost-primary"
           onClick = { this.handleClickRegister }
           type = 'primary'
+          disable = { false }
         />
       </Col>
       <Col span = { 4 }>
@@ -61,8 +72,9 @@ class DeviceSection extends Component {
           icon = "shopping"
           color = "#fadb14"
           fontColor = 'black'
-          onClick = { null }
+          onClick = { this.handleClickShop }
           type = 'primary'
+          disable = {!this.props.link}
         />
       </Col>
     </Row>

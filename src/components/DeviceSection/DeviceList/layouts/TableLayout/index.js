@@ -4,7 +4,7 @@ import { Header as _Header } from './Header'
 import { Body as _Body } from './Body'
 
 const TableLayout = ({ children }) => (
-    <Table responsive striped>
+    <Table responsive striped >
         { children }
     </Table>
 )

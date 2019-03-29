@@ -69,6 +69,7 @@ class DeviceItemTable extends Component {
 
     const SelectOp = authorizationHook(Item)
     const ItemUser = authorizationHook(Item)
+    
     return(
 
       <>

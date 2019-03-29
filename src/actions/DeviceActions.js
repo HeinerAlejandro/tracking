@@ -144,7 +144,6 @@ const getDevicesFromServer = () => async dispatch => {
             throw response
 
         const devices = await response.json()
-        console.log(devices)
         dispatch(setDevices(devices))
 
     }catch(err){

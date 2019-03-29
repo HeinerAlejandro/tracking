@@ -1,4 +1,4 @@
-import { SET_USER_LOG } from './../../actions/LoginRegisterAction'
+import { SET_USER_LOG, SET_NULL_USER } from './../../actions/LoginRegisterAction'
 
 
 const userDataReducer = (state = {}, action) => {
@@ -6,6 +6,9 @@ const userDataReducer = (state = {}, action) => {
 
         case SET_USER_LOG:
             return { ...state, ...action.payload }
+        case SET_NULL_USER:
+            
+            return action.payload
         default : 
             return state
 

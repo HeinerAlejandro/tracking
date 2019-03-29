@@ -3,6 +3,7 @@ import DeviceItemTable from './DeviceItemTable'
 import TableLayout from './layouts/TableLayout'
 import { Select } from 'antd'
 import DropdownLayout from './layouts/DropdownLayout'
+import { Pagination, PaginationItem, PaginationLink } from 'reactstrap'
 
 class DeviceList extends PureComponent {
 
@@ -20,6 +21,19 @@ class DeviceList extends PureComponent {
     this.getSelect = this.getSelect.bind(this)
 
     this.getItem = this.getItem.bind(this)
+
+    this.handleClick = this.handleClick.bind(this)
+    
+    this.state = {
+      pageCount : 0,
+      currentPage : 0
+    }
+  }
+
+  componentDidUpdate = () => {
+    this.setState({
+      pageCount : Math.ceil(this.props.devices.length/10)
+    })
   }
 
   getColumnsDevices = () => (
@@ -29,7 +43,7 @@ class DeviceList extends PureComponent {
   columnOperation = column => (<th key = {column}>{ column }</th>)
 
   getDevices = () => (
-    this.props.devices && this.props.devices.map(this.deviceOperation)
+    this.props.devices && this.props.devices.slice(this.state.currentPage*10, (this.state.currentPage + 1) * 10).map(this.deviceOperation)
   )
 
   getSimpleList = (devices_name) => (
@@ -55,7 +69,7 @@ class DeviceList extends PureComponent {
       Item = this.getItem(device)
 
     return this.props.type  === 'table'
-      ? <tr>{ Item }</tr>
+      ? <tr key = {device[0]}>{ Item }</tr>
       : Item
   }
 
@@ -79,6 +93,16 @@ class DeviceList extends PureComponent {
     </DropdownLayout>
   )
 
+  handleClick(e, index) {
+    
+    e.preventDefault();
+
+    this.setState({
+      currentPage: index
+    });
+    
+  }
+
   render() {
     
     let Data = null
@@ -90,9 +114,45 @@ class DeviceList extends PureComponent {
     else if(this.props.type === 'select')
   
       Data = this.getSelect(DropdownLayout)
-         
+    
+    const { currentPage } = this.state
+
     return (  
-      <>{ Data }</>
+      <>
+        { Data }
+        <Pagination aria-label="Page navigation example">
+            
+            <PaginationItem disabled={currentPage <= 0}>
+              
+              <PaginationLink
+                onClick={e => this.handleClick(e, currentPage - 1)}
+                previous
+                href="#"
+              />
+              
+            </PaginationItem>
+            
+            {[...Array(this.state.pageCount)].map((page, i) => 
+              <PaginationItem active={i === currentPage} key={i}>
+                <PaginationLink onClick={e => this.handleClick(e, i)} href="#">
+                  {console.log(this.state.pageCount)}
+                  {i + 1}
+                </PaginationLink>
+              </PaginationItem>
+            )}
+
+            <PaginationItem disabled={currentPage >= this.pagesCount - 1}>
+              
+              <PaginationLink
+                onClick={e => this.handleClick(e, currentPage + 1)}
+                next
+                href="#"
+              />
+              
+            </PaginationItem>
+            
+          </Pagination>
+      </>
     )
   }
 }

@@ -7,6 +7,8 @@ import {
   CLIENT_ID_DJANGO,
   CLIENT_SECRET_DJANGO
 } from '../../constants/withTokens'
+
+import { URL_LOGOUT } from '../../constants/withPanel'
 import {store} from './../../store'
 import {
   AppAside,
@@ -31,9 +33,19 @@ class DefaultLayout extends Component {
     super(props)
 
     this.signOut = this.signOut.bind(this)
+    this.redirectToSettigns = this.redirectToSettigns.bind(this)
+    this.redirectToProfile = this.redirectToProfile.bind(this)
   }
 
   loading = () => <Icon type =  'loading'/>
+
+  redirectToSettigns = () => {
+    this.props.history.push('/account/settigns')
+  }
+
+  redirectToProfile = () => {
+    this.props.history.push('/account/profile')
+  }
 
   signOut(e) {
     e.preventDefault()
@@ -53,7 +65,7 @@ class DefaultLayout extends Component {
     
       localStorage.removeItem('backend')
 
-      fetch('http://localhost:8000/auth/revoke-token',{
+      fetch(URL_LOGOUT,{
         body: {
           client_id : CLIENT_ID_DJANGO,
           client_secret: CLIENT_SECRET_DJANGO,
@@ -64,7 +76,7 @@ class DefaultLayout extends Component {
 
     }
     
-    store.dispatch(this.props.setUser({}))
+    store.dispatch(this.props.setNullUser({}))
     store.dispatch(this.props.setAuthenticated(false))
     
     this.props.removeAllDevice()
@@ -80,6 +92,8 @@ class DefaultLayout extends Component {
         <AppHeader fixed>
           <Suspense  fallback={this.loading()}>
             <DefaultHeader
+             redirectSettigns = { this.redirectToSettigns }
+             redirectProfile = { this.redirectToProfile }
              onLogout={e=>this.signOut(e)}
              data_user = { this.props.data_user }
             />
