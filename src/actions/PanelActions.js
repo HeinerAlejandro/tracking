@@ -1,6 +1,7 @@
 import { 
     URL_LINK_SHOP,
-    URL_RESET_PASSWORD } from './../constants/withPanel'
+    URL_RESET_PASSWORD,
+    URL_RESET_NAMES } from './../constants/withPanel'
 import { message } from 'antd';
 
 let token = localStorage.getItem('token')
@@ -8,6 +9,10 @@ let type = localStorage.getItem('type')
 let backend = localStorage.getItem('backend') === null?'':localStorage.getItem('backend')
 
 const SET_LINK_SHOP = 'SET_LINK_SHOP'
+
+message.config({
+    top: 100
+})
 
 const getLinkShopFromServer = () => async dispatch => {
 
@@ -80,18 +85,53 @@ const setLinkShopInServer = (link) => async dispatch => {
     }
 }
 
-const resetPassword = data_reset => async dispatch => {
+const resetNames = data_names => async dispatch => {
 
-    let headers = new headers()
+    let headers = new Headers()
 
     headers.append('Authorization', `${type} ${backend} ${token}`)
+    headers.append('Content-Type', `application/json`)
+
+    let body = data_names
+
+    console.log(body)
+    const options = {
+        mode : 'cors',
+        method : 'POST',
+        headers : headers,
+        body : body
+    }
+
+    try{
+        const response = await fetch(URL_RESET_NAMES, options)
+
+        if(!response.ok)
+            throw response
+       
+        message.success("Nombres cambiados con exito")
+
+        return true
+
+    }catch(error){
+        message.error("Error al cambiar los nombres")
+        return false
+    }
+
+}
+
+const resetPassword = data_reset => async dispatch => {
+
+    let headers = new Headers()
+
+    headers.append('Authorization', `${type} ${backend} ${token}`)
+    headers.append('Content-Type', `application/json`)
     
     let body = data_reset
 
     const options = {
         method : 'POST',
         headers : headers,
-        body : JSON.stringify(body)
+        body : body
     }
 
     try{
@@ -104,9 +144,11 @@ const resetPassword = data_reset => async dispatch => {
 
         message.success(json.detail)
 
+        return true
+
     }catch(error){
-        console.log(error)
         message.error(error.detail)
+        return false
     }
 
 }
@@ -121,5 +163,6 @@ export {
     setLinkShop,
     setLinkShopInServer,
     getLinkShopFromServer,
-    resetPassword
+    resetPassword,
+    resetNames
 }

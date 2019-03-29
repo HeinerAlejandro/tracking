@@ -56,13 +56,12 @@ export default class ImageProfile extends Component {
                 headers = {{
                   Authorization : `${type} ${backend} ${token}`
                 }}
-                withCredentials
             >
               <div>
                 <Icon type = { this.state.loading ? 'loading' : 'plus' } />
                 <img 
-                  src = { this.props.image ? this.props.image : '../../reources/user-not-found.png' }
-                  styles = {{ width : '300px' }}
+                  src = { this.props.image ? this.props.image : 'resources/user-not-found.png' }
+                  style = {{ width : '75px' }}
                 />
 
               </div>

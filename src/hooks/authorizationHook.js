@@ -8,8 +8,20 @@ const authorizationHook = WrapComponent => {
 
             const authorized = this.props.isSuperuser
             
+            let data_render = null
+
+            if(authorized === null)
+                data_render = (
+                    <Icon type = 'loading' />
+                )
+            else if(authorized)
+                data_render = (
+                    <WrapComponent {...this.props} />
+                )
+            else data_render = (<></>)
+
             return(
-                (authorized && <WrapComponent {...this.props} />) || <Icon type = 'loading' />
+                data_render
             )
         }
     }

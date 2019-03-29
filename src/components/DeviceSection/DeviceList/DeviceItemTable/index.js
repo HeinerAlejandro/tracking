@@ -68,7 +68,7 @@ class DeviceItemTable extends Component {
     )
 
     const SelectOp = authorizationHook(Item)
-
+    const ItemUser = authorizationHook(Item)
     return(
 
       <>
@@ -92,6 +92,10 @@ class DeviceItemTable extends Component {
           values = { ['ACTIVO', 'INACTIVO'] }
         />
         
+        <ItemUser 
+          type = 'simple'
+          values = { data.user || 'No asignado' }
+        />
 
         <td>
           <Button 
@@ -112,7 +116,6 @@ class DeviceItemTable extends Component {
   }
 
   render() {
-    console.log(this.props.type)
     const data_render = this.getItemChildrenLayoutRenderDevice() 
  
     return (

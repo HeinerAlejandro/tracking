@@ -1,4 +1,4 @@
-import { SET_USER_LOG, SET_IMG_USER } from './../../actions/LoginRegisterAction'
+import { SET_USER_LOG } from './../../actions/LoginRegisterAction'
 
 
 const userDataReducer = (state = {}, action) => {

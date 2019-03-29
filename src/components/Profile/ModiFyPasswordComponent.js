@@ -13,18 +13,32 @@ function hasErrors(fieldsError) {
 
 class ModiFyPasswordComponent extends React.Component {
 
+    constructor(props){
+        super(props)
+
+        this.state = {
+            loading : false
+        }
+    }
+
     handleSubmit = (e) => {
+        this.setState({
+            loading : true
+        })
+
         e.preventDefault();
        
         this.props.form.validateFieldsAndScroll((err, values) => {
           if (!err) {
-            const data_reset = {
+            const data_reset = JSON.stringify({
               new_password1 : this.props.form.getFieldValue('n-password'),
               new_password2 : this.props.form.getFieldValue('n-confirm'),
               old_password : this.props.form.getFieldValue('old_password')
-            }
+            })
           
-            this.props.reset(data_reset)
+            let status = this.props.reset_pass(data_reset)
+
+            status.then(value => this.setState({loading:false}))
           }
         });
     }
@@ -108,7 +122,7 @@ class ModiFyPasswordComponent extends React.Component {
                             type="password"
                             size = 'large'
                             prefix = {<Icon type = 'lock' style = {{color : 'gray'}} />}
-                            placeholder = 'verificacion' />
+                            placeholder = 'contraseña actual' />
                         )}
                     </FormItem>
 
@@ -116,7 +130,7 @@ class ModiFyPasswordComponent extends React.Component {
                         <Button
                             type="primary"
                             className = 'button-login-register'
-                            loading = {this.props.registering}
+                            loading = {this.state.loading}
                             disabled = {hasErrors(this.props.form.getFieldsError())}
                             htmlType = 'submit'>
                             Registrese

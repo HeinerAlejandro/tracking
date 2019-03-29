@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Col, Row } from 'reactstrap';
 import ImageProfile from './ImageProfile'
 import FormPassword from './ModiFyPasswordComponent'
+import FormNames from './ModifyNames'
 
 class Profile extends Component {
 
@@ -15,8 +16,13 @@ class Profile extends Component {
               image = { this.props.image }
               setUser = { this.props.setUser }
             />
+            <FormNames
+              reset_names = { this.props.reset_names }
+              fn = { this.props.fn }
+              ln = { this.props.ln }
+            />
             <FormPassword
-              reset = { this.props.reset }
+              reset_pass = { this.props.reset_pass }
             />
           </Col>           
         </Row>

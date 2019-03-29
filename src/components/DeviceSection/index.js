@@ -25,7 +25,8 @@ class DeviceSection extends Component {
         'Codigo',
         'Tipo',
         'Fecha de registro',
-        'Estado',
+        'Estado', 
+        'usuario',
         ''
       ]
 

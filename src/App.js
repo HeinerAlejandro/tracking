@@ -16,12 +16,13 @@ class App extends Component {
       let data = localStorage.getItem("data_user")
       
       let data_user_complete = setUserLog(data)
-
+      console.log("esta es la data de usuario completa")
+      console.log(data_user_complete)
       data_user_complete.then(data_user_complete => {
         store.dispatch(setUser(data_user_complete))
         store.dispatch(setAuthenticated(true))
       }).catch(error => {
-        message.error(error)
+        message.error("fallo al autenticar")
       })
     }
   }
