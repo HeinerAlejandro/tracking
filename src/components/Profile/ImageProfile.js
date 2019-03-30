@@ -63,7 +63,7 @@ export default class ImageProfile extends Component {
               <div>
                 <Icon type = { type_icon } />
                 <img 
-                  src = { this.props.image ? this.props.image : '/media/user-not-found.png' }
+                  src = { this.props.image ? 'http://localhost:8000'+this.props.image : 'http://localhost:8000/media/user-not-found.png' }
                   style = {{ width : '102px' }}
                 />
 
