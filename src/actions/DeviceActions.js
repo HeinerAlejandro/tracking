@@ -1,6 +1,7 @@
 import { URL_DEVICES } from './../constants/withPanel'
 import { message } from 'antd'
-
+import Cookies from 'js-cookie'
+const csrftoken = Cookies.get('csrftoken')
 const ADD_DEVICE = 'ADD_DEVICE'
 const REMOVE_ALL_DEVICES = 'REMOVE_ALL_DEVICES'
 const SELECT_DEVICE = 'SELECT_DEVICE'
@@ -81,7 +82,7 @@ const fetchCreateDevice = device => async dispatch => {
     let backend = localStorage.getItem('backend') === null?'':localStorage.getItem('backend')
 
     headers.append('Authorization', `${type} ${backend} ${token}`)
-
+    headers.append('X-CSRFToken', csrftoken)
     const options = {
         method : 'post',
         mode : 'cors',
@@ -119,13 +120,13 @@ const fetchCreateDevice = device => async dispatch => {
 }
 
 const getDevicesFromServer = () => async dispatch => {
-    console.log("OBTENIENDO DEL SERVER DEVICED")
+    
     try {
 
         let headers = new Headers()
 
         headers.append('Accept', 'application/json')
-
+        headers.append('X-CSRFToken', csrftoken)
         let token = localStorage.getItem('token')
         let type = localStorage.getItem('type')
         let backend = localStorage.getItem('backend') === null?'':localStorage.getItem('backend')
@@ -179,7 +180,7 @@ const getLastPosition = device => async dispatch => {
 
     headers.append('Content-Type', 'application/json')
     headers.append('Authorization', `${type} ${backend} ${token}`)
-
+    headers.append('X-CSRFToken', csrftoken)
     try{
         const response = await fetch(`${URL_DEVICES}?last=True`, {
             method: 'GET',
@@ -217,7 +218,7 @@ const getIntervalPosition = (interval) => async dispatch => {
 
     headers.append('Content-Type', 'application/json')
     headers.append('Authorization', `${type} ${backend} ${token}`)
-
+    headers.append('X-CSRFToken', csrftoken)
     try{
         const response = await fetch(`${URL_DEVICES}/${interval.device}/positions?init=${interval.init}&final=${interval.final}`, {
             method: 'GET',

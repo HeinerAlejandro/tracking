@@ -15,7 +15,8 @@ import {
 
 
 import { RouteDashboard } from '../Routes/AccountRouter'
-
+import Cookies from 'js-cookie'
+const csrftoken = Cookies.get('csrftoken')
 const SET_USER_LOG = 'SET_USER_LOG'
 const SET_NULL_USER = 'SET_NULL_USER'
 const SET_VISIBLE_RESET_PASSWORD = 'SET_VISIBLE_RESET_PASSWORD'
@@ -58,7 +59,8 @@ const setUserLog = async (data_user = null, social = false) => {
 			method : 'GET',
 			headers : {
 				Accept : 'application/json',
-				Authorization : `${type} ${backend} ${token}`
+				Authorization : `${type} ${backend} ${token}`,
+				'X-CSRFToken' : csrftoken
 			}
 		}
 
@@ -143,7 +145,7 @@ const initAuthentication = data_user => async dispatch => {
 
 	headers.append('Content-Type', 'application/json')
 	headers.append('Accept', 'application/json')
-	
+	headers.append('X-CSRFToken', csrftoken)
 	const options = {
 		method : 'POST',
 		headers,
@@ -190,7 +192,7 @@ const initAuthentication = data_user => async dispatch => {
 const sendUuidResetPassword = data => async dispatch => {
 	const header = new Headers()
 	header.append('Content-Type', 'application/json')
-
+	header.append('"X-CSRFToken', csrftoken)
 	try{
 		const response = await fetch(`${URL_SERVER}/accounts/password/reset/confirm/`, {
 									method : 'POST',
@@ -258,7 +260,7 @@ const initRegistration = data_user => async dispatch => {
 
 	header.append('Content-Type', 'application/json')
 	header.append('Accept', 'application/json')
-
+	header.append('"X-CSRFToken', csrftoken)
 	const HEADER = {
 		method : 'POST',
 		headers: header,
@@ -337,7 +339,8 @@ const converToken = async access_token  => {
     	method: "POST",
        	headers: {
         	Accept: "application/json",
-        	"Content-Type": "application/x-www-form-urlencoded"
+			"Content-Type": "application/x-www-form-urlencoded",
+			'X-CSRFToken' : csrftoken
        	},
 		body: searchParams
 	}

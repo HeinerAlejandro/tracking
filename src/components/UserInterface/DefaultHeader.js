@@ -44,7 +44,7 @@ class DefaultHeader extends Component {
           
           <AppHeaderDropdown direction="down">
             <DropdownToggle nav>
-              <img src={ this.props.data_user.imageUrl ?   'http://localhost:8000'+this.props.data_user.imageUrl : 'http://localhost:8000/media/user-not-found.png'} className=  "img-avatar" alt = { this.props.data_user.name } />
+              <img src={ this.props.data_user.imageUrl ? this.props.data_user.imageUrl : '/media/user-not-found.png'} className=  "img-avatar" alt = { this.props.data_user.name } />
             </DropdownToggle>
             <DropdownMenu right style={{ right: 'auto' }}>
               <DropdownItem onClick = {e => this.props.redirectProfile(e) } ><i className="fa fa-user"></i>Perfil</DropdownItem>

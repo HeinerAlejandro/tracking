@@ -8,7 +8,8 @@ import {
 import { URL_PROFILE_IMAGE } from '../../constants/withPanel'
 
 import { Card } from 'reactstrap';
-
+import Cookies from 'js-cookie'
+const csrftoken = Cookies.get('csrftoken')
 const FormItem = Form.Item
 
 function getBase64(img, callback) {
@@ -55,13 +56,14 @@ export default class ImageProfile extends Component {
                 showUploadList = { false }
                 listType = "picture-card"
                 headers = {{
-                  Authorization : `${type} ${backend} ${token}`
+                  Authorization : `${type} ${backend} ${token}`,
+                  'X-CSRFToken' : csrftoken
                 }}
             >
               <div>
                 <Icon type = { type_icon } />
                 <img 
-                  src = { this.props.image ? 'http://localhost:8000'+this.props.image : 'http://localhost:8000/media/user-not-found.png' }
+                  src = { this.props.image ? this.props.image : '/media/user-not-found.png' }
                   style = {{ width : '102px' }}
                 />
 

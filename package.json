@@ -21,6 +21,7 @@
     "flag-icon-css": "^3.2.1",
     "font-awesome": "^4.7.0",
     "history": "^4.7.2",
+    "js-cookie": "^2.2.0",
     "leaflet": "^1.4.0",
     "leaflet.awesome-markers": "^2.0.5",
     "less": "^3.9.0",

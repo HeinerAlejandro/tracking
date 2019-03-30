@@ -3,10 +3,11 @@ import {
     URL_RESET_PASSWORD,
     URL_RESET_NAMES } from './../constants/withPanel'
 import { message } from 'antd';
-
-let token = localStorage.getItem('token')
-let type = localStorage.getItem('type')
-let backend = localStorage.getItem('backend') === null?'':localStorage.getItem('backend')
+import Cookies from 'js-cookie'
+const csrftoken = Cookies.get('csrftoken')
+const token = localStorage.getItem('token')
+const type = localStorage.getItem('type')
+const backend = localStorage.getItem('backend') === null?'':localStorage.getItem('backend')
 
 const SET_LINK_SHOP = 'SET_LINK_SHOP'
 
@@ -17,25 +18,27 @@ message.config({
 const getLinkShopFromServer = () => async dispatch => {
 
     try{
+        
         let headers = new Headers()
 
-       
+        
 
         headers.append('Content-Type', 'application/json')
         headers.append('Accept', 'application/json')
         headers.append('Authorization', `${type} ${backend} ${token}`)
-        console.log(`${type} ${backend} ${token}`)
+        headers.append('X-CSRFToken', csrftoken)
+        console.log("antes de fetch en link")
         const options = {
             method : 'get',
             mode : 'cors',
             headers : headers,            
         }
-
+        
         const response = await fetch(URL_LINK_SHOP, options)
-
+        console.log(response)
         if(!response.ok)
             throw response
-
+            console.log(response)
         const { link } = await response.json()
 
 
@@ -53,7 +56,7 @@ const setLinkShopInServer = (link) => async dispatch => {
     
     headers.append('Authorization', `${type} ${backend} ${token}`)
     headers.append('Content-Type', 'application/json')
-    
+    headers.append('X-CSRFToken', csrftoken)
 
     let body = { link }
 
@@ -91,6 +94,7 @@ const resetNames = data_names => async dispatch => {
 
     headers.append('Authorization', `${type} ${backend} ${token}`)
     headers.append('Content-Type', `application/json`)
+    headers.append('X-CSRFToken', csrftoken)
 
     let body = data_names
 
@@ -125,6 +129,7 @@ const resetPassword = data_reset => async dispatch => {
 
     headers.append('Authorization', `${type} ${backend} ${token}`)
     headers.append('Content-Type', `application/json`)
+    headers.append('X-CSRFToken', csrftoken)
     
     let body = data_reset
 
